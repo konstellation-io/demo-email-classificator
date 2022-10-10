@@ -1,0 +1,7 @@
+go 1.18
+
+use (
+	./classificator/src/email_filter
+	./classificator/src/exitpoint
+	./classificator/src/stats_storer
+)

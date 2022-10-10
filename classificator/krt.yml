@@ -1,0 +1,61 @@
+version: descriptor-v2
+krtVersion: v2
+description: Version for testing.
+entrypoint:
+  proto: public_input.proto
+  image: konstellation/kre-entrypoint:latest
+config:
+  variables:
+    - GITHUB_ENABLED
+    - DOCKERHUB_ENABLED
+    - EARLY_REPLY_ENABLED
+workflows:
+  - name: go-descriptor
+    entrypoint: GoDescriptor
+    exitpoint: exitpoint
+    nodes:
+      - name: etl
+        image: konstellation/kre-go:latest
+        src: bin/etl
+        # gpu is an optional value, defaults to false.
+        gpu: false
+        subscriptions:
+          - "entrypoint"
+
+      - name: github
+        image: konstellation/kre-go:latest
+        src: bin/github
+        # gpu is an optional value, defaults to false.
+        gpu: false
+        subscriptions:
+          - "etl.github"
+
+      - name: dockerhub
+        image: konstellation/kre-go:latest
+        src: bin/dockerhub
+        # gpu is an optional value, defaults to false.
+        gpu: false
+        subscriptions:
+          - "etl.dockerhub"
+
+      - name: exitpoint
+        image: konstellation/kre-go:latest
+        src: bin/exitpoint
+        # gpu is an optional value, defaults to false.
+        gpu: false
+        subscriptions:
+          - "etl"
+          - "github"
+          - "dockerhub"
+
+  - name: py-echo
+    entrypoint: PyEcho
+    exitpoint: echo
+    nodes:
+      - name: echo
+        image: konstellation/kre-py:latest
+        src: src/echo/main.py
+        # gpu is an optional value, defaults to false.
+        gpu: false
+        subscriptions:
+          - "entrypoint"

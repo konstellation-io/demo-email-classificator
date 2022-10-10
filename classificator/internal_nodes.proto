@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package main;
+
+option go_package = "./proto";
+
+enum EmailCategory{
+  CATEGORY_REPARATIONS = 0;
+  CATEGORY_ADMINISTRATION = 1;
+  CATEGORY_BILLING = 2;
+  CATEGORY_SPAM = 3;
+}
+
+message Email {
+  string title = 1;
+  string body = 2;
+  string author = 3;
+  string creation_date = 4;
+}
+
+message EtlOutput {
+  repeated Email emails = 1;
+}
+
+message ClassificatorOutput {
+  Email email = 1;
+  EmailCategory category = 2;
+}

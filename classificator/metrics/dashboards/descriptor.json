@@ -1,0 +1,691 @@
+{
+  "id": "1",
+  "cells": [
+    {
+      "i": "8e01abe5-5f8c-442e-b5ad-10d6689678cb",
+      "x": 6,
+      "y": 8,
+      "w": 6,
+      "h": 3,
+      "name": "Workflows Processing Time (ms)",
+      "queries": [
+        {
+          "query": "from(bucket: \"kre/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"workflow_elapsed_time\" and (r._field == \"elapsed_ms\"))\n  |> keep(columns: [\"version\", \"workflow\", \"_value\"])\n  |> group(columns: [\"workflow\", \"version\"])\n  |> reduce(fn: (r, accumulator) => ({\n    min: if r._value < accumulator.min then r._value else accumulator.min,\n    max: if r._value > accumulator.max then r._value else accumulator.max,\n    total: r._value + accumulator.total,\n    count: accumulator.count + 1.0\n   }), identity: {min: 999999999.0, max: 0.0, total: 0.0, count: 0.0})\n  |> map(fn: (r) => ({ r with avg: r.total / r.count }))\n  |> drop(columns: [\"count\"])\n  |> group(columns: [\"workflow\"])\n  |> map(fn: (r) => ({ \"1\": r.workflow, \"2\": r.version, \"3\": r.min, \"4\": r.max, \"5\": r.avg, \"6\": r.total})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Workflow\", \"2\": \"Version\", \"3\": \"Min\", \"4\": \"Max\", \"5\": \"Avg\", \"6\": \"Total\" })",
+          "queryConfig": {
+            "database": "",
+            "measurement": "",
+            "retentionPolicy": "",
+            "fields": [],
+            "tags": {},
+            "groupBy": {
+              "time": "",
+              "tags": []
+            },
+            "areTagsAccepted": false,
+            "rawText": "from(bucket: \"kre/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"workflow_elapsed_time\" and (r._field == \"elapsed_ms\"))\n  |> keep(columns: [\"version\", \"workflow\", \"_value\"])\n  |> group(columns: [\"workflow\", \"version\"])\n  |> reduce(fn: (r, accumulator) => ({\n    min: if r._value < accumulator.min then r._value else accumulator.min,\n    max: if r._value > accumulator.max then r._value else accumulator.max,\n    total: r._value + accumulator.total,\n    count: accumulator.count + 1.0\n   }), identity: {min: 999999999.0, max: 0.0, total: 0.0, count: 0.0})\n  |> map(fn: (r) => ({ r with avg: r.total / r.count }))\n  |> drop(columns: [\"count\"])\n  |> group(columns: [\"workflow\"])\n  |> map(fn: (r) => ({ \"1\": r.workflow, \"2\": r.version, \"3\": r.min, \"4\": r.max, \"5\": r.avg, \"6\": r.total})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Workflow\", \"2\": \"Version\", \"3\": \"Min\", \"4\": \"Max\", \"5\": \"Avg\", \"6\": \"Total\" })",
+            "range": null,
+            "shifts": null
+          },
+          "source": "",
+          "type": "flux"
+        }
+      ],
+      "axes": {
+        "x": {
+          "bounds": ["", ""],
+          "label": "",
+          "prefix": "",
+          "suffix": "",
+          "base": "10",
+          "scale": "linear"
+        },
+        "y": {
+          "bounds": ["", ""],
+          "label": "",
+          "prefix": "",
+          "suffix": "",
+          "base": "10",
+          "scale": "linear"
+        },
+        "y2": {
+          "bounds": ["", ""],
+          "label": "",
+          "prefix": "",
+          "suffix": "",
+          "base": "10",
+          "scale": "linear"
+        }
+      },
+      "type": "table",
+      "colors": [
+        {
+          "id": "base",
+          "type": "text",
+          "hex": "#00C9FF",
+          "name": "laser",
+          "value": "-1000000000000000000"
+        }
+      ],
+      "legend": {},
+      "tableOptions": {
+        "verticalTimeAxis": true,
+        "sortBy": {
+          "internalName": "time",
+          "displayName": "",
+          "visible": true
+        },
+        "wrapping": "truncate",
+        "fixFirstColumn": true
+      },
+      "fieldOptions": [
+        {
+          "internalName": "Workflow",
+          "displayName": "",
+          "visible": true
+        },
+        {
+          "internalName": "Version",
+          "displayName": "",
+          "visible": true
+        },
+        {
+          "internalName": "Min",
+          "displayName": "",
+          "visible": true
+        },
+        {
+          "internalName": "Max",
+          "displayName": "",
+          "visible": true
+        },
+        {
+          "internalName": "Avg",
+          "displayName": "",
+          "visible": true
+        },
+        {
+          "internalName": "Total",
+          "displayName": "",
+          "visible": true
+        }
+      ],
+      "timeFormat": "MM/DD/YYYY HH:mm:ss",
+      "decimalPlaces": {
+        "isEnforced": true,
+        "digits": 2
+      },
+      "note": "",
+      "noteVisibility": "default",
+      "links": {
+        "self": "/chronograf/v1/dashboards/45/cells/8e01abe5-5f8c-442e-b5ad-10d6689678cb"
+      }
+    },
+    {
+      "i": "cd806c05-e870-4831-8d3d-b3a84943a93b",
+      "x": 4,
+      "y": 3,
+      "w": 8,
+      "h": 5,
+      "name": "Number of Results per Request",
+      "queries": [
+        {
+          "query": "from(bucket: \"kre/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"results\" )\n  |> duplicate(column: \"_value\", as: \"Result\")\n  |> group(columns: [\"version\", \"node\", \"_field\", \"Result\", \"request\"])\n  |> count()\n  |> group(columns: [\"version\"])\n  |> map(fn: (r) => ({ \"1\": r.version, \"2\": r.node, \"3\": r.request, \"4\": r._field, \"5\": r.Result, \"6\": r._value})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Version\", \"2\": \"Node\", \"3\": \"Request\", \"4\": \"Tag or Release\", \"5\": \"Result\", \"6\": \"Number of Times Returned\" })\n  |> sort(columns: [\"Number of Times Returned\"], desc: true)\n",
+          "queryConfig": {
+            "database": "",
+            "measurement": "",
+            "retentionPolicy": "",
+            "fields": [],
+            "tags": {},
+            "groupBy": {
+              "time": "",
+              "tags": []
+            },
+            "areTagsAccepted": false,
+            "rawText": "from(bucket: \"kre/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"results\" )\n  |> duplicate(column: \"_value\", as: \"Result\")\n  |> group(columns: [\"version\", \"node\", \"_field\", \"Result\", \"request\"])\n  |> count()\n  |> group(columns: [\"version\"])\n  |> map(fn: (r) => ({ \"1\": r.version, \"2\": r.node, \"3\": r.request, \"4\": r._field, \"5\": r.Result, \"6\": r._value})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Version\", \"2\": \"Node\", \"3\": \"Request\", \"4\": \"Tag or Release\", \"5\": \"Result\", \"6\": \"Number of Times Returned\" })\n  |> sort(columns: [\"Number of Times Returned\"], desc: true)\n",
+            "range": null,
+            "shifts": null
+          },
+          "source": "",
+          "type": "flux"
+        }
+      ],
+      "axes": {
+        "x": {
+          "bounds": ["", ""],
+          "label": "",
+          "prefix": "",
+          "suffix": "",
+          "base": "10",
+          "scale": "linear"
+        },
+        "y": {
+          "bounds": ["", ""],
+          "label": "",
+          "prefix": "",
+          "suffix": "",
+          "base": "10",
+          "scale": "linear"
+        },
+        "y2": {
+          "bounds": ["", ""],
+          "label": "",
+          "prefix": "",
+          "suffix": "",
+          "base": "10",
+          "scale": "linear"
+        }
+      },
+      "type": "table",
+      "colors": [
+        {
+          "id": "base",
+          "type": "text",
+          "hex": "#00C9FF",
+          "name": "laser",
+          "value": "-1000000000000000000"
+        }
+      ],
+      "legend": {},
+      "tableOptions": {
+        "verticalTimeAxis": true,
+        "sortBy": {
+          "internalName": "time",
+          "displayName": "",
+          "visible": true
+        },
+        "wrapping": "truncate",
+        "fixFirstColumn": false
+      },
+      "fieldOptions": [
+        {
+          "internalName": "Version",
+          "displayName": "",
+          "visible": true
+        },
+        {
+          "internalName": "Node",
+          "displayName": "",
+          "visible": true
+        },
+        {
+          "internalName": "Request",
+          "displayName": "",
+          "visible": true
+        },
+        {
+          "internalName": "Tag or Release",
+          "displayName": "",
+          "visible": true
+        },
+        {
+          "internalName": "Result",
+          "displayName": "",
+          "visible": true
+        },
+        {
+          "internalName": "Number of Times Returned",
+          "displayName": "",
+          "visible": true
+        }
+      ],
+      "timeFormat": "MM/DD/YYYY HH:mm:ss",
+      "decimalPlaces": {
+        "isEnforced": true,
+        "digits": 2
+      },
+      "note": "",
+      "noteVisibility": "default",
+      "links": {
+        "self": "/chronograf/v1/dashboards/45/cells/cd806c05-e870-4831-8d3d-b3a84943a93b"
+      }
+    },
+    {
+      "i": "808994b6-2696-4752-883c-08f341fbcc69",
+      "x": 0,
+      "y": 3,
+      "w": 4,
+      "h": 5,
+      "name": "Number of Requests",
+      "queries": [
+        {
+          "query": "from(bucket: \"kre/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"requests\" and r._field == \"requested_component\")\n  |> duplicate(column: \"_value\", as: \"request\")\n  |> group(columns: [\"request\", \"version\"])\n  |> count()\n  |> group(columns: [\"version\"])\n  |> map(fn: (r) => ({ \"1\": r.version, \"2\": r.request, \"3\": r._value})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Version\", \"2\": \"Requested Component\", \"3\": \"Number of Requests\"})\n  |> sort(columns: [\"Number of Requests\"], desc: true)\n",
+          "queryConfig": {
+            "database": "",
+            "measurement": "",
+            "retentionPolicy": "",
+            "fields": [],
+            "tags": {},
+            "groupBy": {
+              "time": "",
+              "tags": []
+            },
+            "areTagsAccepted": false,
+            "rawText": "from(bucket: \"kre/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"requests\" and r._field == \"requested_component\")\n  |> duplicate(column: \"_value\", as: \"request\")\n  |> group(columns: [\"request\", \"version\"])\n  |> count()\n  |> group(columns: [\"version\"])\n  |> map(fn: (r) => ({ \"1\": r.version, \"2\": r.request, \"3\": r._value})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Version\", \"2\": \"Requested Component\", \"3\": \"Number of Requests\"})\n  |> sort(columns: [\"Number of Requests\"], desc: true)\n",
+            "range": null,
+            "shifts": null
+          },
+          "source": "",
+          "type": "flux"
+        }
+      ],
+      "axes": {
+        "x": {
+          "bounds": ["", ""],
+          "label": "",
+          "prefix": "",
+          "suffix": "",
+          "base": "10",
+          "scale": "linear"
+        },
+        "y": {
+          "bounds": ["", ""],
+          "label": "",
+          "prefix": "",
+          "suffix": "",
+          "base": "10",
+          "scale": "linear"
+        },
+        "y2": {
+          "bounds": ["", ""],
+          "label": "",
+          "prefix": "",
+          "suffix": "",
+          "base": "10",
+          "scale": "linear"
+        }
+      },
+      "type": "table",
+      "colors": [
+        {
+          "id": "base",
+          "type": "text",
+          "hex": "#00C9FF",
+          "name": "laser",
+          "value": "-1000000000000000000"
+        }
+      ],
+      "legend": {},
+      "tableOptions": {
+        "verticalTimeAxis": true,
+        "sortBy": {
+          "internalName": "time",
+          "displayName": "",
+          "visible": true
+        },
+        "wrapping": "truncate",
+        "fixFirstColumn": false
+      },
+      "fieldOptions": [
+        {
+          "internalName": "Version",
+          "displayName": "",
+          "visible": true
+        },
+        {
+          "internalName": "Requested Component",
+          "displayName": "",
+          "visible": true
+        },
+        {
+          "internalName": "Number of Requests",
+          "displayName": "",
+          "visible": true
+        }
+      ],
+      "timeFormat": "MM/DD/YYYY HH:mm:ss",
+      "decimalPlaces": {
+        "isEnforced": true,
+        "digits": 2
+      },
+      "note": "",
+      "noteVisibility": "default",
+      "links": {
+        "self": "/chronograf/v1/dashboards/45/cells/808994b6-2696-4752-883c-08f341fbcc69"
+      }
+    },
+    {
+      "i": "6c64da9e-8c8e-4001-89c9-e8ea4bfe83d2",
+      "x": 4,
+      "y": 0,
+      "w": 8,
+      "h": 3,
+      "name": "Number of Requests Plot",
+      "queries": [
+        {
+          "query": "from(bucket: \"kre/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"requests\" )\n  |> keep(columns: [\"_time\"])\n  |> map(fn: (r) => ({ r with _value: 1 }))\n  |> group()\n  |> aggregateWindow(every: autoInterval, fn: sum)",
+          "queryConfig": {
+            "database": "",
+            "measurement": "",
+            "retentionPolicy": "",
+            "fields": [],
+            "tags": {},
+            "groupBy": {
+              "time": "",
+              "tags": []
+            },
+            "areTagsAccepted": false,
+            "rawText": "from(bucket: \"kre/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"requests\" )\n  |> keep(columns: [\"_time\"])\n  |> map(fn: (r) => ({ r with _value: 1 }))\n  |> group()\n  |> aggregateWindow(every: autoInterval, fn: sum)",
+            "range": null,
+            "shifts": null
+          },
+          "source": "",
+          "type": "flux"
+        }
+      ],
+      "axes": {
+        "x": {
+          "bounds": ["", ""],
+          "label": "",
+          "prefix": "",
+          "suffix": "",
+          "base": "10",
+          "scale": "linear"
+        },
+        "y": {
+          "bounds": ["", ""],
+          "label": "Total Requests",
+          "prefix": "",
+          "suffix": "",
+          "base": "10",
+          "scale": "linear"
+        },
+        "y2": {
+          "bounds": ["", ""],
+          "label": "",
+          "prefix": "",
+          "suffix": "",
+          "base": "10",
+          "scale": "linear"
+        }
+      },
+      "type": "line",
+      "colors": [
+        {
+          "id": "506c2338-ec45-489b-bac9-c2e9aa9549bd",
+          "type": "scale",
+          "hex": "#31C0F6",
+          "name": "Nineteen Eighty Four",
+          "value": "0"
+        },
+        {
+          "id": "7c9fd469-4e5f-44ea-8d36-ce0cbef6b11c",
+          "type": "scale",
+          "hex": "#A500A5",
+          "name": "Nineteen Eighty Four",
+          "value": "0"
+        },
+        {
+          "id": "50590f19-0857-49ab-84fb-ab1f4a6c7c1f",
+          "type": "scale",
+          "hex": "#FF7E27",
+          "name": "Nineteen Eighty Four",
+          "value": "0"
+        }
+      ],
+      "legend": {},
+      "tableOptions": {
+        "verticalTimeAxis": true,
+        "sortBy": {
+          "internalName": "time",
+          "displayName": "",
+          "visible": true
+        },
+        "wrapping": "truncate",
+        "fixFirstColumn": true
+      },
+      "fieldOptions": [
+        {
+          "internalName": "_time",
+          "displayName": "",
+          "visible": true
+        },
+        {
+          "internalName": "_value",
+          "displayName": "",
+          "visible": true
+        }
+      ],
+      "timeFormat": "MM/DD/YYYY HH:mm:ss",
+      "decimalPlaces": {
+        "isEnforced": true,
+        "digits": 2
+      },
+      "note": "",
+      "noteVisibility": "default",
+      "links": {
+        "self": "/chronograf/v1/dashboards/45/cells/6c64da9e-8c8e-4001-89c9-e8ea4bfe83d2"
+      }
+    },
+    {
+      "i": "9f9ffdcd-8bdf-4719-b9c7-c15f6e249730",
+      "x": 0,
+      "y": 8,
+      "w": 6,
+      "h": 3,
+      "name": "Nodes Processing Time (ms)",
+      "queries": [
+        {
+          "query": "from(bucket: \"kre/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"node_elapsed_time\" and (r._field == \"elapsed_ms\"))\n  |> keep(columns: [\"node\", \"workflow\", \"_value\"])\n  |> group(columns: [\"workflow\", \"node\"])\n  |> reduce(fn: (r, accumulator) => ({\n    min: if r._value < accumulator.min then r._value else accumulator.min,\n    max: if r._value > accumulator.max then r._value else accumulator.max,\n    total: r._value + accumulator.total,\n    count: accumulator.count + 1.0\n   }), identity: {min: 999999999.0, max: 0.0, total: 0.0, count: 0.0})\n  |> map(fn: (r) => ({ r with avg: r.total / r.count }))\n  |> drop(columns: [\"count\"])\n  |> group(columns: [\"workflow\"])\n  |> map(fn: (r) => ({ \"1\": r.workflow, \"2\": r.node, \"3\": r.min, \"4\": r.max, \"5\": r.avg, \"6\": r.total})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Workflow\", \"2\": \"Node\", \"3\": \"Min\", \"4\": \"Max\", \"5\": \"Avg\", \"6\": \"Total\" })",
+          "queryConfig": {
+            "database": "",
+            "measurement": "",
+            "retentionPolicy": "",
+            "fields": [],
+            "tags": {},
+            "groupBy": {
+              "time": "",
+              "tags": []
+            },
+            "areTagsAccepted": false,
+            "rawText": "from(bucket: \"kre/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"node_elapsed_time\" and (r._field == \"elapsed_ms\"))\n  |> keep(columns: [\"node\", \"workflow\", \"_value\"])\n  |> group(columns: [\"workflow\", \"node\"])\n  |> reduce(fn: (r, accumulator) => ({\n    min: if r._value < accumulator.min then r._value else accumulator.min,\n    max: if r._value > accumulator.max then r._value else accumulator.max,\n    total: r._value + accumulator.total,\n    count: accumulator.count + 1.0\n   }), identity: {min: 999999999.0, max: 0.0, total: 0.0, count: 0.0})\n  |> map(fn: (r) => ({ r with avg: r.total / r.count }))\n  |> drop(columns: [\"count\"])\n  |> group(columns: [\"workflow\"])\n  |> map(fn: (r) => ({ \"1\": r.workflow, \"2\": r.node, \"3\": r.min, \"4\": r.max, \"5\": r.avg, \"6\": r.total})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Workflow\", \"2\": \"Node\", \"3\": \"Min\", \"4\": \"Max\", \"5\": \"Avg\", \"6\": \"Total\" })",
+            "range": null,
+            "shifts": null
+          },
+          "source": "",
+          "type": "flux"
+        }
+      ],
+      "axes": {
+        "x": {
+          "bounds": ["", ""],
+          "label": "",
+          "prefix": "",
+          "suffix": "",
+          "base": "10",
+          "scale": "linear"
+        },
+        "y": {
+          "bounds": ["", ""],
+          "label": "",
+          "prefix": "",
+          "suffix": "",
+          "base": "10",
+          "scale": "linear"
+        },
+        "y2": {
+          "bounds": ["", ""],
+          "label": "",
+          "prefix": "",
+          "suffix": "",
+          "base": "10",
+          "scale": "linear"
+        }
+      },
+      "type": "table",
+      "colors": [
+        {
+          "id": "base",
+          "type": "text",
+          "hex": "#00C9FF",
+          "name": "laser",
+          "value": "-1000000000000000000"
+        }
+      ],
+      "legend": {},
+      "tableOptions": {
+        "verticalTimeAxis": true,
+        "sortBy": {
+          "internalName": "time",
+          "displayName": "",
+          "visible": true
+        },
+        "wrapping": "truncate",
+        "fixFirstColumn": true
+      },
+      "fieldOptions": [
+        {
+          "internalName": "Workflow",
+          "displayName": "",
+          "visible": true
+        },
+        {
+          "internalName": "Node",
+          "displayName": "",
+          "visible": true
+        },
+        {
+          "internalName": "Min",
+          "displayName": "",
+          "visible": true
+        },
+        {
+          "internalName": "Max",
+          "displayName": "",
+          "visible": true
+        },
+        {
+          "internalName": "Avg",
+          "displayName": "",
+          "visible": true
+        },
+        {
+          "internalName": "Total",
+          "displayName": "",
+          "visible": true
+        }
+      ],
+      "timeFormat": "MM/DD/YYYY HH:mm:ss",
+      "decimalPlaces": {
+        "isEnforced": true,
+        "digits": 2
+      },
+      "note": "",
+      "noteVisibility": "default",
+      "links": {
+        "self": "/chronograf/v1/dashboards/45/cells/9f9ffdcd-8bdf-4719-b9c7-c15f6e249730"
+      }
+    },
+    {
+      "i": "78480194-cb19-4b38-a813-cb6d95d5046c",
+      "x": 0,
+      "y": 0,
+      "w": 4,
+      "h": 3,
+      "name": "Number of Calls for Each Node",
+      "queries": [
+        {
+          "query": "from(bucket: \"kre/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"node_elapsed_time\" and (r._field == \"elapsed_ms\"))\n  |> duplicate(column: \"node\", as: \"node\")\n  |> group(columns: [\"node\", \"version\"])\n  |> count()\n  |> group(columns: [\"version\"])\n  |> map(fn: (r) => ({ \"1\": r.version, \"2\": r.node, \"3\": r._value})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Version\", \"2\": \"Called Node\", \"3\": \"Number of Calls\"})",
+          "queryConfig": {
+            "database": "",
+            "measurement": "",
+            "retentionPolicy": "",
+            "fields": [],
+            "tags": {},
+            "groupBy": {
+              "time": "",
+              "tags": []
+            },
+            "areTagsAccepted": false,
+            "rawText": "from(bucket: \"kre/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"node_elapsed_time\" and (r._field == \"elapsed_ms\"))\n  |> duplicate(column: \"node\", as: \"node\")\n  |> group(columns: [\"node\", \"version\"])\n  |> count()\n  |> group(columns: [\"version\"])\n  |> map(fn: (r) => ({ \"1\": r.version, \"2\": r.node, \"3\": r._value})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Version\", \"2\": \"Called Node\", \"3\": \"Number of Calls\"})",
+            "range": null,
+            "shifts": null
+          },
+          "source": "",
+          "type": "flux"
+        }
+      ],
+      "axes": {
+        "x": {
+          "bounds": ["", ""],
+          "label": "",
+          "prefix": "",
+          "suffix": "",
+          "base": "10",
+          "scale": "linear"
+        },
+        "y": {
+          "bounds": ["", ""],
+          "label": "",
+          "prefix": "",
+          "suffix": "",
+          "base": "10",
+          "scale": "linear"
+        },
+        "y2": {
+          "bounds": ["", ""],
+          "label": "",
+          "prefix": "",
+          "suffix": "",
+          "base": "10",
+          "scale": "linear"
+        }
+      },
+      "type": "table",
+      "colors": [
+        {
+          "id": "base",
+          "type": "text",
+          "hex": "#00C9FF",
+          "name": "laser",
+          "value": "-1000000000000000000"
+        }
+      ],
+      "legend": {},
+      "tableOptions": {
+        "verticalTimeAxis": true,
+        "sortBy": {
+          "internalName": "time",
+          "displayName": "",
+          "visible": true
+        },
+        "wrapping": "truncate",
+        "fixFirstColumn": false
+      },
+      "fieldOptions": [
+        {
+          "internalName": "Version",
+          "displayName": "",
+          "visible": true
+        },
+        {
+          "internalName": "Called Node",
+          "displayName": "",
+          "visible": true
+        },
+        {
+          "internalName": "Number of Calls",
+          "displayName": "",
+          "visible": true
+        }
+      ],
+      "timeFormat": "MM/DD/YYYY HH:mm:ss",
+      "decimalPlaces": {
+        "isEnforced": true,
+        "digits": 2
+      },
+      "note": "",
+      "noteVisibility": "default",
+      "links": {
+        "self": "/chronograf/v1/dashboards/45/cells/78480194-cb19-4b38-a813-cb6d95d5046c"
+      }
+    }
+  ],
+  "templates": [],
+  "name": "Descriptor",
+  "organization": "default",
+  "links": {
+    "self": "/chronograf/v1/dashboards/1",
+    "cells": "/chronograf/v1/dashboards/1/cells",
+    "templates": "/chronograf/v1/dashboards/1/templates"
+  }
+}
