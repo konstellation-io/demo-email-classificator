@@ -7,7 +7,7 @@
 
 set -eu
 
-VERSION_DIR="descriptor"
+VERSION_DIR="classificator"
 
 # NOTE: if yq commands fails it due to the awesome Snap installation that is confined (heavily restricted).
 # Please install yq binary from https://github.com/mikefarah/yq/releases and think twice before using Snap next time.
@@ -24,17 +24,13 @@ if [ -z "$VERSION" ]; then
   exit 1;
 fi
 
-echo "Building ETL node Golang binary..."
-cd descriptor/src/etl
-go build -o ../../bin/etl .
+echo "Building Stats Storer node Golang binary..."
+cd classificator/src/stats_storer
+go build -o ../../bin/stats_storer .
 
-echo "Building Github node Golang binary..."
-cd ../github
-go build -o ../../bin/github .
-
-echo "Building Dockerhub node Golang binary..."
-cd ../dockerhub
-go build -o ../../bin/dockerhub .
+echo "Building Email Filter node Golang binary..."
+cd ../email_filter
+go build -o ../../bin/email_filter .
 
 echo "Building Exitpoint node Golang binary..."
 cd ../exitpoint

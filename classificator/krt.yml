@@ -19,7 +19,7 @@ workflows:
         subscriptions:
           - "entrypoint"
 
-      - name: email_classificator
+      - name: email-classificator
         image: konstellation/kre-py:latest
         src: src/email_classificator/main.py
         # gpu is an optional value, defaults to false.
@@ -27,21 +27,21 @@ workflows:
         subscriptions:
           - "etl"
 
-      - name: email_filter
+      - name: email-filter
         image: konstellation/kre-go:latest
         src: bin/email_filter
         # gpu is an optional value, defaults to false.
         gpu: false
         subscriptions:
-          - "email_classificator.repairs"
+          - "email-classificator.repairs"
 
-      - name: stats_storer
+      - name: stats-storer
         image: konstellation/kre-go:latest
         src: bin/stats_storer
         # gpu is an optional value, defaults to false.
         gpu: false
         subscriptions:
-          - "email_classificator"
+          - "email-classificator"
 
       - name: exitpoint
         image: konstellation/kre-go:latest

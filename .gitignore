@@ -1,5 +1,5 @@
 /.idea/
 /build/
-/descriptor/bin/
+/classificator/bin/
 
 *.txt

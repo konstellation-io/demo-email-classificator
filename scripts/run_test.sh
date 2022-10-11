@@ -10,7 +10,7 @@ VERSION=$3
 ENTRYPOINT_SERVICE=main.Entrypoint/${4:-"GoDescriptor"}
 DEFAULT_MESSAGES=1
 TOTAL_MESSAGES=${5:-$DEFAULT_MESSAGES}
-REQUEST_DATA='{"component":"'${6:-John}'"}'
+REQUEST_DATA='{}'
 SEND_CONCURRENT=1
 
 run_test() {
