@@ -41,7 +41,7 @@ workflows:
         # gpu is an optional value, defaults to false.
         gpu: false
         subscriptions:
-          - "email_classificator.others"
+          - "email_classificator"
 
       - name: exitpoint
         image: konstellation/kre-go:latest
