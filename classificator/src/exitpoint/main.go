@@ -9,6 +9,12 @@ func handlerInit(ctx *kre.HandlerContext) {
 	ctx.Logger.Info("[handler init]")
 }
 
+func defaultHandler(ctx *kre.HandlerContext, data *anypb.Any) error {
+	ctx.Logger.Info("[default handler invoked]")
+	storeMetrics(ctx)
+	return nil
+}
+
 func handler(ctx *kre.HandlerContext, data *anypb.Any) error {
 	ctx.Logger.Info("[handler invoked]")
 
@@ -16,11 +22,13 @@ func handler(ctx *kre.HandlerContext, data *anypb.Any) error {
 		ctx.SendAny(data)
 	}
 
+	storeMetrics(ctx)
+
 	return nil
 }
 
 // storeMetrics is a helper function to save influxdb metrics for the exitpoint node.
-func storeMetrics(ctx *kre.HandlerContext, component string, lastTag string) {
+func storeMetrics(ctx *kre.HandlerContext) {
 	tags := map[string]string{}
 
 	fields := map[string]interface{}{
@@ -31,5 +39,9 @@ func storeMetrics(ctx *kre.HandlerContext, component string, lastTag string) {
 }
 
 func main() {
-	kre.Start(handlerInit, handler)
+	handlers := map[string]kre.Handler{
+		"etl": handler,
+	}
+
+	kre.Start(handlerInit, handler, handlers)
 }

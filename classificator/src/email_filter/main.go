@@ -1,8 +1,13 @@
 package main
 
 import (
-	"github.com/konstellation-io/kre-runners/kre-go"
+	"email_filter/proto"
+	"fmt"
+
+	protobuf "google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/anypb"
+
+	"github.com/konstellation-io/kre-runners/kre-go"
 )
 
 func handlerInit(ctx *kre.HandlerContext) {
@@ -11,16 +16,32 @@ func handlerInit(ctx *kre.HandlerContext) {
 
 func handler(ctx *kre.HandlerContext, data *anypb.Any) error {
 	ctx.Logger.Info("[handler invoked]")
+
+	req := &proto.ClassificatorOutput{}
+	err := anypb.UnmarshalTo(data, req, protobuf.UnmarshalOptions{})
+	if err != nil {
+		return fmt.Errorf("invalid request: %s", err)
+	}
+
+	storeEmail(ctx, req.Email)
+	storeMetrics(ctx)
+
 	return nil
 }
 
+func storeEmail(ctx *kre.HandlerContext, email *proto.Email) error {
+	return ctx.DB.Save("repair_emails", email)
+}
+
 // storeMetrics is a helper function to save influxdb metrics for the email_filter node.
-func storeMetrics(ctx *kre.HandlerContext, component string, lastTag string) {
+func storeMetrics(ctx *kre.HandlerContext) {
 	tags := map[string]string{}
 
-	fields := map[string]interface{}{}
+	fields := map[string]interface{}{
+		"called_node": "stats_storer",
+	}
 
-	ctx.Measurement.Save("results", fields, tags)
+	ctx.Measurement.Save("number_of_calls", fields, tags)
 }
 
 func main() {
