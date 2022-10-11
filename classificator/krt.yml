@@ -1,4 +1,4 @@
-version: descriptor-v2
+version: classificator-v1
 krtVersion: v2
 description: Version for testing.
 entrypoint:
@@ -6,37 +6,42 @@ entrypoint:
   image: konstellation/kre-entrypoint:latest
 config:
   variables:
-    - GITHUB_ENABLED
-    - DOCKERHUB_ENABLED
-    - EARLY_REPLY_ENABLED
 workflows:
-  - name: go-descriptor
-    entrypoint: GoDescriptor
+  - name: classificator
+    entrypoint: Classificator
     exitpoint: exitpoint
     nodes:
       - name: etl
-        image: konstellation/kre-go:latest
-        src: bin/etl
+        image: konstellation/kre-py:latest
+        src: src/etl/main.py
         # gpu is an optional value, defaults to false.
         gpu: false
         subscriptions:
           - "entrypoint"
 
-      - name: github
-        image: konstellation/kre-go:latest
-        src: bin/github
+      - name: email_classificator
+        image: konstellation/kre-py:latest
+        src: src/email_classificator/main.py
         # gpu is an optional value, defaults to false.
         gpu: false
         subscriptions:
-          - "etl.github"
+          - "etl"
 
-      - name: dockerhub
+      - name: email_filter
         image: konstellation/kre-go:latest
-        src: bin/dockerhub
+        src: bin/email_filter
         # gpu is an optional value, defaults to false.
         gpu: false
         subscriptions:
-          - "etl.dockerhub"
+          - "email_classificator.repairs"
+
+      - name: stats_storer
+        image: konstellation/kre-go:latest
+        src: bin/stats_storer
+        # gpu is an optional value, defaults to false.
+        gpu: false
+        subscriptions:
+          - "email_classificator.others"
 
       - name: exitpoint
         image: konstellation/kre-go:latest
@@ -45,17 +50,3 @@ workflows:
         gpu: false
         subscriptions:
           - "etl"
-          - "github"
-          - "dockerhub"
-
-  - name: py-echo
-    entrypoint: PyEcho
-    exitpoint: echo
-    nodes:
-      - name: echo
-        image: konstellation/kre-py:latest
-        src: src/echo/main.py
-        # gpu is an optional value, defaults to false.
-        gpu: false
-        subscriptions:
-          - "entrypoint"
