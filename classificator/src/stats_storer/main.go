@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
 	"stats_storer/proto"
 
 	protobuf "google.golang.org/protobuf/proto"
@@ -24,26 +23,8 @@ func handler(ctx *kre.HandlerContext, data *anypb.Any) error {
 		return fmt.Errorf("invalid request: %s", err)
 	}
 
-	for i := rand.Intn(10); i != 0; i-- {
-		category := pickupRandCategory()
-		storeMetrics(ctx, category.String())
-	}
-
+	storeMetrics(ctx, req.Category.String())
 	return nil
-}
-
-func pickupRandCategory() proto.EmailCategory {
-	number := rand.Intn(4)
-	switch number {
-	case 0:
-		return proto.EmailCategory_CATEGORY_REPARATIONS
-	case 1:
-		return proto.EmailCategory_CATEGORY_ADMINISTRATION
-	case 2:
-		return proto.EmailCategory_CATEGORY_BILLING
-	default:
-		return proto.EmailCategory_CATEGORY_SPAM
-	}
 }
 
 // storeMetrics is a helper function to save influxdb metrics for the stats_storer node.
