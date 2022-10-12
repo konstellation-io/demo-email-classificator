@@ -23,8 +23,11 @@ func handler(ctx *kre.HandlerContext, data *anypb.Any) error {
 		return fmt.Errorf("invalid request: %s", err)
 	}
 
-	storeEmail(ctx, req.Email)
-	storeMetrics(ctx)
+	err = storeEmail(ctx, req.Email)
+	if err != nil {
+		ctx.Logger.Errorf("error storing email: %w", err)
+	}
+	//storeMetrics(ctx)
 
 	return nil
 }
@@ -34,15 +37,15 @@ func storeEmail(ctx *kre.HandlerContext, email *proto.Email) error {
 }
 
 // storeMetrics is a helper function to save influxdb metrics for the email_filter node.
-func storeMetrics(ctx *kre.HandlerContext) {
-	tags := map[string]string{}
-
-	fields := map[string]interface{}{
-		"called_node": "stats_storer",
-	}
-
-	ctx.Measurement.Save("number_of_calls", fields, tags)
-}
+//func storeMetrics(ctx *kre.HandlerContext) {
+//	tags := map[string]string{}
+//
+//	fields := map[string]interface{}{
+//		"called_node": "stats_storer",
+//	}
+//
+//	ctx.Measurement.Save("number_of_calls", fields, tags)
+//}
 
 func main() {
 	kre.Start(handlerInit, handler)
