@@ -5,6 +5,8 @@ from proto.internal_nodes_pb2 import EtlOutput, EmailCategory, Email, CATEGORY_A
 
 
 async def default_handler(ctx, req):
+    if ctx.is_request_early_reply():
+        return
     etl_output = EtlOutput()
     req.Unpack(etl_output)
     for email in etl_output.emails:
