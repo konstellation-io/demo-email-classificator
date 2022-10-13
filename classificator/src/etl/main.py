@@ -7,19 +7,17 @@ from proto.internal_nodes_pb2 import EtlOutput, Email
 def init(ctx):
     ctx.logger.info("[executing init]")
     emails = []
-    with open("/krt-files/src/etl/emails.csv") as csvfile:
+    with open(ctx.path("src/etl/emails.csv")) as csvfile:
         rows = csv.DictReader(csvfile)
-        # next(rows, None)
         for row in rows:
-            emails.append(row)
-    ctx.logger.info(emails[0])
+            emails.append(dict_to_email(row))
     ctx.set("emails", emails)
     ctx.logger.info("[init] emails csv loaded")
 
 
 async def default_handler(ctx, _):
     ctx.logger.info("[executing default handler]")
-    emails = [dict_to_email(email) for email in ctx.get("emails")]
+    emails = ctx.get("emails")
     res = Response()
     res.message = "Email processing in progress"
     await ctx.early_reply(res)
