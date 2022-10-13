@@ -1,8 +1,8 @@
 package main
 
 import (
-	"email_filter/proto"
 	"fmt"
+	"repairs_handler/proto"
 
 	protobuf "google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/anypb"
@@ -27,7 +27,6 @@ func handler(ctx *kre.HandlerContext, data *anypb.Any) error {
 	if err != nil {
 		ctx.Logger.Errorf("error storing email: %w", err)
 	}
-	//storeMetrics(ctx)
 
 	return nil
 }
@@ -35,17 +34,6 @@ func handler(ctx *kre.HandlerContext, data *anypb.Any) error {
 func storeEmail(ctx *kre.HandlerContext, email *proto.Email) error {
 	return ctx.DB.Save("repair_emails", email)
 }
-
-// storeMetrics is a helper function to save influxdb metrics for the email_filter node.
-//func storeMetrics(ctx *kre.HandlerContext) {
-//	tags := map[string]string{}
-//
-//	fields := map[string]interface{}{
-//		"called_node": "stats_storer",
-//	}
-//
-//	ctx.Measurement.Save("number_of_calls", fields, tags)
-//}
 
 func main() {
 	kre.Start(handlerInit, handler)

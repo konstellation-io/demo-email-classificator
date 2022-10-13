@@ -27,9 +27,9 @@ workflows:
         subscriptions:
           - "etl"
 
-      - name: email-filter
+      - name: repairs-handler
         image: konstellation/kre-go:latest
-        src: bin/email_filter
+        src: bin/repairs_handler
         # gpu is an optional value, defaults to false.
         gpu: false
         subscriptions:
