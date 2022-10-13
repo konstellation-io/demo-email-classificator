@@ -15,7 +15,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x14internal_nodes.proto\x12\x04main\"K\n\x05\x45mail\x12\r\n\x05title\x18\x01 \x01(\t\x12\x0c\n\x04\x62ody\x18\x02 \x01(\t\x12\x0e\n\x06\x61uthor\x18\x03 \x01(\t\x12\x15\n\rcreation_date\x18\x04 \x01(\t\"(\n\tEtlOutput\x12\x1b\n\x06\x65mails\x18\x01 \x03(\x0b\x32\x0b.main.Email\"X\n\x13\x43lassificatorOutput\x12\x1a\n\x05\x65mail\x18\x01 \x01(\x0b\x32\x0b.main.Email\x12%\n\x08\x63\x61tegory\x18\x02 \x01(\x0e\x32\x13.main.EmailCategory*o\n\rEmailCategory\x12\x18\n\x14\x43\x41TEGORY_REPARATIONS\x10\x00\x12\x1b\n\x17\x43\x41TEGORY_ADMINISTRATION\x10\x01\x12\x14\n\x10\x43\x41TEGORY_BILLING\x10\x02\x12\x11\n\rCATEGORY_SPAM\x10\x03\x42\tZ\x07./protob\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x14internal_nodes.proto\x12\x04main\"K\n\x05\x45mail\x12\r\n\x05title\x18\x01 \x01(\t\x12\x0c\n\x04\x62ody\x18\x02 \x01(\t\x12\x0e\n\x06\x61uthor\x18\x03 \x01(\t\x12\x15\n\rcreation_date\x18\x04 \x01(\t\"\'\n\tEtlOutput\x12\x1a\n\x05\x65mail\x18\x01 \x01(\x0b\x32\x0b.main.Email\"X\n\x13\x43lassificatorOutput\x12\x1a\n\x05\x65mail\x18\x01 \x01(\x0b\x32\x0b.main.Email\x12%\n\x08\x63\x61tegory\x18\x02 \x01(\x0e\x32\x13.main.EmailCategory\"$\n\x11StatsStorerOutput\x12\x0f\n\x07message\x18\x01 \x01(\t*o\n\rEmailCategory\x12\x18\n\x14\x43\x41TEGORY_REPARATIONS\x10\x00\x12\x1b\n\x17\x43\x41TEGORY_ADMINISTRATION\x10\x01\x12\x14\n\x10\x43\x41TEGORY_BILLING\x10\x02\x12\x11\n\rCATEGORY_SPAM\x10\x03\x42\tZ\x07./protob\x06proto3')
 
 _EMAILCATEGORY = DESCRIPTOR.enum_types_by_name['EmailCategory']
 EmailCategory = enum_type_wrapper.EnumTypeWrapper(_EMAILCATEGORY)
@@ -28,6 +28,7 @@ CATEGORY_SPAM = 3
 _EMAIL = DESCRIPTOR.message_types_by_name['Email']
 _ETLOUTPUT = DESCRIPTOR.message_types_by_name['EtlOutput']
 _CLASSIFICATOROUTPUT = DESCRIPTOR.message_types_by_name['ClassificatorOutput']
+_STATSSTOREROUTPUT = DESCRIPTOR.message_types_by_name['StatsStorerOutput']
 Email = _reflection.GeneratedProtocolMessageType('Email', (_message.Message,), {
   'DESCRIPTOR' : _EMAIL,
   '__module__' : 'internal_nodes_pb2'
@@ -49,16 +50,25 @@ ClassificatorOutput = _reflection.GeneratedProtocolMessageType('ClassificatorOut
   })
 _sym_db.RegisterMessage(ClassificatorOutput)
 
+StatsStorerOutput = _reflection.GeneratedProtocolMessageType('StatsStorerOutput', (_message.Message,), {
+  'DESCRIPTOR' : _STATSSTOREROUTPUT,
+  '__module__' : 'internal_nodes_pb2'
+  # @@protoc_insertion_point(class_scope:main.StatsStorerOutput)
+  })
+_sym_db.RegisterMessage(StatsStorerOutput)
+
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
   DESCRIPTOR._serialized_options = b'Z\007./proto'
-  _EMAILCATEGORY._serialized_start=239
-  _EMAILCATEGORY._serialized_end=350
+  _EMAILCATEGORY._serialized_start=276
+  _EMAILCATEGORY._serialized_end=387
   _EMAIL._serialized_start=30
   _EMAIL._serialized_end=105
   _ETLOUTPUT._serialized_start=107
-  _ETLOUTPUT._serialized_end=147
-  _CLASSIFICATOROUTPUT._serialized_start=149
-  _CLASSIFICATOROUTPUT._serialized_end=237
+  _ETLOUTPUT._serialized_end=146
+  _CLASSIFICATOROUTPUT._serialized_start=148
+  _CLASSIFICATOROUTPUT._serialized_end=236
+  _STATSSTOREROUTPUT._serialized_start=238
+  _STATSSTOREROUTPUT._serialized_end=274
 # @@protoc_insertion_point(module_scope)

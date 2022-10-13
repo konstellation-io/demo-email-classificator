@@ -1,7 +1,10 @@
 package main
 
 import (
+	"exitpoint/proto"
+	"fmt"
 	"github.com/konstellation-io/kre-runners/kre-go"
+	protobuf "google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/anypb"
 )
 
@@ -9,19 +12,38 @@ func handlerInit(ctx *kre.HandlerContext) {
 	ctx.Logger.Info("[handler init]")
 }
 
-func defaultHandler(ctx *kre.HandlerContext, data *anypb.Any) error {
-	ctx.Logger.Info("[handler invoked]")
+func defaultHandler(ctx *kre.HandlerContext, _ *anypb.Any) error {
+	ctx.Logger.Info("[executing default handler]")
+	return nil
+}
+
+func etlHandler(ctx *kre.HandlerContext, data *anypb.Any) error {
+	ctx.Logger.Info("[executing etl handler]")
 
 	if ctx.GetRequestMessageType() == kre.MessageType_EARLY_REPLY {
-		return ctx.SendAny(data)
+		ctx.SendAny(data)
 	}
+
+	return nil
+}
+
+func statsStorerHandler(ctx *kre.HandlerContext, data *anypb.Any) error {
+	ctx.Logger.Info("[executing stats-storer handler]")
+
+	statsStorerOutput := &proto.StatsStorerOutput{}
+	err := anypb.UnmarshalTo(data, statsStorerOutput, protobuf.UnmarshalOptions{})
+	if err != nil {
+		return fmt.Errorf("invalid request: %s", err)
+	}
+	ctx.Logger.Info(statsStorerOutput.Message)
 
 	return nil
 }
 
 func main() {
 	handlers := map[string]kre.Handler{
-		"etl": defaultHandler,
+		"etl":          etlHandler,
+		"stats-storer": statsStorerHandler,
 	}
 
 	kre.Start(handlerInit, defaultHandler, handlers)

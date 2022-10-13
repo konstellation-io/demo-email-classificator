@@ -9,14 +9,14 @@ async def default_handler(ctx, req):
         return
     etl_output = EtlOutput()
     req.Unpack(etl_output)
-    for email in etl_output.emails:
-        category = classify_email(email)
-        res = ClassificatorOutput()
-        res.email.CopyFrom(email)
-        res.category = category
-        if category == CATEGORY_REPARATIONS:
-            await ctx.send_output(res, "repairs")
-        await ctx.send_output(res)
+    email = etl_output.email
+    category = classify_email(email)
+    res = ClassificatorOutput()
+    res.email.CopyFrom(email)
+    res.category = category
+    if category == CATEGORY_REPARATIONS:
+        await ctx.send_output(res, "repairs")
+    await ctx.send_output(res)
 
 
 def classify_email(_: Email) -> EmailCategory:

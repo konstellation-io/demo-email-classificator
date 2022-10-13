@@ -1,6 +1,6 @@
 version: classificator-v1
 krtVersion: v2
-description: Version for testing.
+description: Demo email classificator for branching features.
 entrypoint:
   proto: public_input.proto
   image: konstellation/kre-entrypoint:latest
@@ -14,39 +14,30 @@ workflows:
       - name: etl
         image: konstellation/kre-py:latest
         src: src/etl/main.py
-        # gpu is an optional value, defaults to false.
-        gpu: false
         subscriptions:
           - "entrypoint"
 
       - name: email-classificator
         image: konstellation/kre-py:latest
         src: src/email_classificator/main.py
-        # gpu is an optional value, defaults to false.
-        gpu: false
         subscriptions:
           - "etl"
 
       - name: repairs-handler
         image: konstellation/kre-go:latest
         src: bin/repairs_handler
-        # gpu is an optional value, defaults to false.
-        gpu: false
         subscriptions:
           - "email-classificator.repairs"
 
       - name: stats-storer
         image: konstellation/kre-go:latest
         src: bin/stats_storer
-        # gpu is an optional value, defaults to false.
-        gpu: false
         subscriptions:
           - "email-classificator"
 
       - name: exitpoint
         image: konstellation/kre-go:latest
         src: bin/exitpoint
-        # gpu is an optional value, defaults to false.
-        gpu: false
         subscriptions:
           - "etl"
+          - "stats-storer"

@@ -4,7 +4,9 @@ package main;
 
 option go_package = "./proto";
 
-message Request {}
+message Request {
+  string filename = 1;
+}
 
 message Response {
   string message = 1;

@@ -10,8 +10,11 @@ import (
 	"github.com/konstellation-io/kre-runners/kre-go"
 )
 
+const messageCounterKey = "messageCounter"
+
 func handlerInit(ctx *kre.HandlerContext) {
 	ctx.Logger.Info("[handler init]")
+	ctx.Set(messageCounterKey, 0)
 }
 
 func handler(ctx *kre.HandlerContext, data *anypb.Any) error {
@@ -24,6 +27,16 @@ func handler(ctx *kre.HandlerContext, data *anypb.Any) error {
 	}
 
 	storeMetrics(ctx, req.Category.String())
+	messageCounter := ctx.Get(messageCounterKey).(int)
+	messageCounter = (messageCounter + 1) % 50
+	if messageCounter == 0 {
+		res := &proto.StatsStorerOutput{Message: "50 messages processed"}
+		err := ctx.SendOutput(res)
+		if err != nil {
+			ctx.Logger.Errorf("error publishing message: %w", err)
+		}
+	}
+	ctx.Set(messageCounterKey, messageCounter)
 	return nil
 }
 

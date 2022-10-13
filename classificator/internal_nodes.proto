@@ -19,10 +19,14 @@ message Email {
 }
 
 message EtlOutput {
-  repeated Email emails = 1;
+  Email email = 1;
 }
 
 message ClassificatorOutput {
   Email email = 1;
   EmailCategory category = 2;
+}
+
+message StatsStorerOutput {
+  string message = 1;
 }
