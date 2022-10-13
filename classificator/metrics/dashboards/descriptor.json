@@ -10,7 +10,7 @@
       "name": "Workflows Processing Time (ms)",
       "queries": [
         {
-          "query": "from(bucket: \"kre/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"workflow_elapsed_time\" and (r._field == \"elapsed_ms\"))\n  |> keep(columns: [\"version\", \"workflow\", \"_value\"])\n  |> group(columns: [\"workflow\", \"version\"])\n  |> reduce(fn: (r, accumulator) => ({\n    min: if r._value < accumulator.min then r._value else accumulator.min,\n    max: if r._value > accumulator.max then r._value else accumulator.max,\n    total: r._value + accumulator.total,\n    count: accumulator.count + 1.0\n   }), identity: {min: 999999999.0, max: 0.0, total: 0.0, count: 0.0})\n  |> map(fn: (r) => ({ r with avg: r.total / r.count }))\n  |> drop(columns: [\"count\"])\n  |> group(columns: [\"workflow\"])\n  |> map(fn: (r) => ({ \"1\": r.workflow, \"2\": r.version, \"3\": r.min, \"4\": r.max, \"5\": r.avg, \"6\": r.total})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Workflow\", \"2\": \"Version\", \"3\": \"Min\", \"4\": \"Max\", \"5\": \"Avg\", \"6\": \"Total\" })",
+          "query": "from(bucket: \"demo/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"workflow_elapsed_time\" and (r._field == \"elapsed_ms\"))\n  |> keep(columns: [\"version\", \"workflow\", \"_value\"])\n  |> group(columns: [\"workflow\", \"version\"])\n  |> reduce(fn: (r, accumulator) => ({\n    min: if r._value < accumulator.min then r._value else accumulator.min,\n    max: if r._value > accumulator.max then r._value else accumulator.max,\n    total: r._value + accumulator.total,\n    count: accumulator.count + 1.0\n   }), identity: {min: 999999999.0, max: 0.0, total: 0.0, count: 0.0})\n  |> map(fn: (r) => ({ r with avg: r.total / r.count }))\n  |> drop(columns: [\"count\"])\n  |> group(columns: [\"workflow\"])\n  |> map(fn: (r) => ({ \"1\": r.workflow, \"2\": r.version, \"3\": r.min, \"4\": r.max, \"5\": r.avg, \"6\": r.total})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Workflow\", \"2\": \"Version\", \"3\": \"Min\", \"4\": \"Max\", \"5\": \"Avg\", \"6\": \"Total\" })",
           "queryConfig": {
             "database": "",
             "measurement": "",
@@ -22,7 +22,7 @@
               "tags": []
             },
             "areTagsAccepted": false,
-            "rawText": "from(bucket: \"kre/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"workflow_elapsed_time\" and (r._field == \"elapsed_ms\"))\n  |> keep(columns: [\"version\", \"workflow\", \"_value\"])\n  |> group(columns: [\"workflow\", \"version\"])\n  |> reduce(fn: (r, accumulator) => ({\n    min: if r._value < accumulator.min then r._value else accumulator.min,\n    max: if r._value > accumulator.max then r._value else accumulator.max,\n    total: r._value + accumulator.total,\n    count: accumulator.count + 1.0\n   }), identity: {min: 999999999.0, max: 0.0, total: 0.0, count: 0.0})\n  |> map(fn: (r) => ({ r with avg: r.total / r.count }))\n  |> drop(columns: [\"count\"])\n  |> group(columns: [\"workflow\"])\n  |> map(fn: (r) => ({ \"1\": r.workflow, \"2\": r.version, \"3\": r.min, \"4\": r.max, \"5\": r.avg, \"6\": r.total})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Workflow\", \"2\": \"Version\", \"3\": \"Min\", \"4\": \"Max\", \"5\": \"Avg\", \"6\": \"Total\" })",
+            "rawText": "from(bucket: \"demo/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"workflow_elapsed_time\" and (r._field == \"elapsed_ms\"))\n  |> keep(columns: [\"version\", \"workflow\", \"_value\"])\n  |> group(columns: [\"workflow\", \"version\"])\n  |> reduce(fn: (r, accumulator) => ({\n    min: if r._value < accumulator.min then r._value else accumulator.min,\n    max: if r._value > accumulator.max then r._value else accumulator.max,\n    total: r._value + accumulator.total,\n    count: accumulator.count + 1.0\n   }), identity: {min: 999999999.0, max: 0.0, total: 0.0, count: 0.0})\n  |> map(fn: (r) => ({ r with avg: r.total / r.count }))\n  |> drop(columns: [\"count\"])\n  |> group(columns: [\"workflow\"])\n  |> map(fn: (r) => ({ \"1\": r.workflow, \"2\": r.version, \"3\": r.min, \"4\": r.max, \"5\": r.avg, \"6\": r.total})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Workflow\", \"2\": \"Version\", \"3\": \"Min\", \"4\": \"Max\", \"5\": \"Avg\", \"6\": \"Total\" })",
             "range": null,
             "shifts": null
           },
@@ -129,7 +129,7 @@
       "name": "Number of Results per Request",
       "queries": [
         {
-          "query": "from(bucket: \"kre/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"classified_emails\" )\n  |> duplicate(column: \"_value\", as: \"Result\")\n  |> group(columns: [\"version\", \"_field\", \"Result\"])\n  |> count()\n  |> group(columns: [\"version\"])\n  |> map(fn: (r) => ({ \"1\": r.version, \"2\": r.Result, \"3\": r._value})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Version\", \"2\": \"Result\", \"3\": \"Count\" })\n  |> sort(columns: [\"Version\", \"Result\"], desc: false)\n",
+          "query": "from(bucket: \"demo/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"classified_emails\" )\n  |> duplicate(column: \"_value\", as: \"Result\")\n  |> group(columns: [\"version\", \"_field\", \"Result\"])\n  |> count()\n  |> group(columns: [\"version\"])\n  |> map(fn: (r) => ({ \"1\": r.version, \"2\": r.Result, \"3\": r._value})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Version\", \"2\": \"Result\", \"3\": \"Count\" })\n  |> sort(columns: [\"Version\", \"Result\"], desc: false)\n",
           "queryConfig": {
             "database": "",
             "measurement": "",
@@ -141,7 +141,7 @@
               "tags": []
             },
             "areTagsAccepted": false,
-            "rawText": "from(bucket: \"kre/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"classified_emails\" )\n  |> duplicate(column: \"_value\", as: \"Result\")\n  |> group(columns: [\"version\", \"_field\", \"Result\"])\n  |> count()\n  |> group(columns: [\"version\"])\n  |> map(fn: (r) => ({ \"1\": r.version, \"2\": r.Result, \"3\": r._value})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Version\", \"2\": \"Result\", \"3\": \"Count\" })\n  |> sort(columns: [\"Version\", \"Result\"], desc: false)\n",
+            "rawText": "from(bucket: \"demo/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"classified_emails\" )\n  |> duplicate(column: \"_value\", as: \"Result\")\n  |> group(columns: [\"version\", \"_field\", \"Result\"])\n  |> count()\n  |> group(columns: [\"version\"])\n  |> map(fn: (r) => ({ \"1\": r.version, \"2\": r.Result, \"3\": r._value})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Version\", \"2\": \"Result\", \"3\": \"Count\" })\n  |> sort(columns: [\"Version\", \"Result\"], desc: false)\n",
             "range": null,
             "shifts": null
           },
@@ -233,7 +233,7 @@
       "name": "Activity Plot",
       "queries": [
         {
-          "query": "from(bucket: \"kre/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"number_of_calls\" )\n  |> keep(columns: [\"_time\"])\n  |> map(fn: (r) => ({ r with _value: 1 }))\n  |> group()\n  |> aggregateWindow(every: autoInterval, fn: sum)",
+          "query": "from(bucket: \"demo/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"number_of_calls\" )\n  |> keep(columns: [\"_time\"])\n  |> map(fn: (r) => ({ r with _value: 1 }))\n  |> group()\n  |> aggregateWindow(every: autoInterval, fn: sum)",
           "queryConfig": {
             "database": "",
             "measurement": "",
@@ -245,7 +245,7 @@
               "tags": []
             },
             "areTagsAccepted": false,
-            "rawText": "from(bucket: \"kre/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"number_of_calls\" )\n  |> keep(columns: [\"_time\"])\n  |> map(fn: (r) => ({ r with _value: 1 }))\n  |> group()\n  |> aggregateWindow(every: autoInterval, fn: sum)",
+            "rawText": "from(bucket: \"demo/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"number_of_calls\" )\n  |> keep(columns: [\"_time\"])\n  |> map(fn: (r) => ({ r with _value: 1 }))\n  |> group()\n  |> aggregateWindow(every: autoInterval, fn: sum)",
             "range": null,
             "shifts": null
           },
@@ -346,7 +346,7 @@
       "name": "Nodes Processing Time (ms)",
       "queries": [
         {
-          "query": "from(bucket: \"kre/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"node_elapsed_time\" and (r._field == \"elapsed_ms\"))\n  |> keep(columns: [\"node\", \"workflow\", \"_value\"])\n  |> group(columns: [\"workflow\", \"node\"])\n  |> reduce(fn: (r, accumulator) => ({\n    min: if r._value < accumulator.min then r._value else accumulator.min,\n    max: if r._value > accumulator.max then r._value else accumulator.max,\n    total: r._value + accumulator.total,\n    count: accumulator.count + 1.0\n   }), identity: {min: 999999999.0, max: 0.0, total: 0.0, count: 0.0})\n  |> map(fn: (r) => ({ r with avg: r.total / r.count }))\n  |> drop(columns: [\"count\"])\n  |> group(columns: [\"workflow\"])\n  |> map(fn: (r) => ({ \"1\": r.workflow, \"2\": r.node, \"3\": r.min, \"4\": r.max, \"5\": r.avg, \"6\": r.total})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Workflow\", \"2\": \"Node\", \"3\": \"Min\", \"4\": \"Max\", \"5\": \"Avg\", \"6\": \"Total\" })",
+          "query": "from(bucket: \"demo/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"node_elapsed_time\" and (r._field == \"elapsed_ms\"))\n  |> keep(columns: [\"node\", \"workflow\", \"_value\"])\n  |> group(columns: [\"workflow\", \"node\"])\n  |> reduce(fn: (r, accumulator) => ({\n    min: if r._value < accumulator.min then r._value else accumulator.min,\n    max: if r._value > accumulator.max then r._value else accumulator.max,\n    total: r._value + accumulator.total,\n    count: accumulator.count + 1.0\n   }), identity: {min: 999999999.0, max: 0.0, total: 0.0, count: 0.0})\n  |> map(fn: (r) => ({ r with avg: r.total / r.count }))\n  |> drop(columns: [\"count\"])\n  |> group(columns: [\"workflow\"])\n  |> map(fn: (r) => ({ \"1\": r.workflow, \"2\": r.node, \"3\": r.min, \"4\": r.max, \"5\": r.avg, \"6\": r.total})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Workflow\", \"2\": \"Node\", \"3\": \"Min\", \"4\": \"Max\", \"5\": \"Avg\", \"6\": \"Total\" })",
           "queryConfig": {
             "database": "",
             "measurement": "",
@@ -358,7 +358,7 @@
               "tags": []
             },
             "areTagsAccepted": false,
-            "rawText": "from(bucket: \"kre/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"node_elapsed_time\" and (r._field == \"elapsed_ms\"))\n  |> keep(columns: [\"node\", \"workflow\", \"_value\"])\n  |> group(columns: [\"workflow\", \"node\"])\n  |> reduce(fn: (r, accumulator) => ({\n    min: if r._value < accumulator.min then r._value else accumulator.min,\n    max: if r._value > accumulator.max then r._value else accumulator.max,\n    total: r._value + accumulator.total,\n    count: accumulator.count + 1.0\n   }), identity: {min: 999999999.0, max: 0.0, total: 0.0, count: 0.0})\n  |> map(fn: (r) => ({ r with avg: r.total / r.count }))\n  |> drop(columns: [\"count\"])\n  |> group(columns: [\"workflow\"])\n  |> map(fn: (r) => ({ \"1\": r.workflow, \"2\": r.node, \"3\": r.min, \"4\": r.max, \"5\": r.avg, \"6\": r.total})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Workflow\", \"2\": \"Node\", \"3\": \"Min\", \"4\": \"Max\", \"5\": \"Avg\", \"6\": \"Total\" })",
+            "rawText": "from(bucket: \"demo/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"node_elapsed_time\" and (r._field == \"elapsed_ms\"))\n  |> keep(columns: [\"node\", \"workflow\", \"_value\"])\n  |> group(columns: [\"workflow\", \"node\"])\n  |> reduce(fn: (r, accumulator) => ({\n    min: if r._value < accumulator.min then r._value else accumulator.min,\n    max: if r._value > accumulator.max then r._value else accumulator.max,\n    total: r._value + accumulator.total,\n    count: accumulator.count + 1.0\n   }), identity: {min: 999999999.0, max: 0.0, total: 0.0, count: 0.0})\n  |> map(fn: (r) => ({ r with avg: r.total / r.count }))\n  |> drop(columns: [\"count\"])\n  |> group(columns: [\"workflow\"])\n  |> map(fn: (r) => ({ \"1\": r.workflow, \"2\": r.node, \"3\": r.min, \"4\": r.max, \"5\": r.avg, \"6\": r.total})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Workflow\", \"2\": \"Node\", \"3\": \"Min\", \"4\": \"Max\", \"5\": \"Avg\", \"6\": \"Total\" })",
             "range": null,
             "shifts": null
           },
@@ -465,7 +465,7 @@
       "name": "Number of Calls for Each Node",
       "queries": [
         {
-          "query": "from(bucket: \"kre/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"node_elapsed_time\" and (r._field == \"elapsed_ms\"))\n  |> duplicate(column: \"node\", as: \"node\")\n  |> group(columns: [\"node\", \"version\"])\n  |> count()\n  |> group(columns: [\"version\"])\n  |> map(fn: (r) => ({ \"1\": r.version, \"2\": r.node, \"3\": r._value})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Version\", \"2\": \"Called Node\", \"3\": \"Number of Calls\"})\n  |> sort(columns: [\"Version\"], desc: false)\n  |> sort(columns: [\"Number of Calls\"], desc: true)",
+          "query": "from(bucket: \"demo/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"node_elapsed_time\" and (r._field == \"elapsed_ms\"))\n  |> duplicate(column: \"node\", as: \"node\")\n  |> group(columns: [\"node\", \"version\"])\n  |> count()\n  |> group(columns: [\"version\"])\n  |> map(fn: (r) => ({ \"1\": r.version, \"2\": r.node, \"3\": r._value})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Version\", \"2\": \"Called Node\", \"3\": \"Number of Calls\"})\n  |> sort(columns: [\"Version\"], desc: false)\n  |> sort(columns: [\"Number of Calls\"], desc: true)",
           "queryConfig": {
             "database": "",
             "measurement": "",
@@ -477,7 +477,7 @@
               "tags": []
             },
             "areTagsAccepted": false,
-            "rawText": "from(bucket: \"kre/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"node_elapsed_time\" and (r._field == \"elapsed_ms\"))\n  |> duplicate(column: \"node\", as: \"node\")\n  |> group(columns: [\"node\", \"version\"])\n  |> count()\n  |> group(columns: [\"version\"])\n  |> map(fn: (r) => ({ \"1\": r.version, \"2\": r.node, \"3\": r._value})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Version\", \"2\": \"Called Node\", \"3\": \"Number of Calls\"})\n  |> sort(columns: [\"Version\"], desc: false)\n  |> sort(columns: [\"Number of Calls\"], desc: true)",
+            "rawText": "from(bucket: \"demo/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"node_elapsed_time\" and (r._field == \"elapsed_ms\"))\n  |> duplicate(column: \"node\", as: \"node\")\n  |> group(columns: [\"node\", \"version\"])\n  |> count()\n  |> group(columns: [\"version\"])\n  |> map(fn: (r) => ({ \"1\": r.version, \"2\": r.node, \"3\": r._value})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Version\", \"2\": \"Called Node\", \"3\": \"Number of Calls\"})\n  |> sort(columns: [\"Version\"], desc: false)\n  |> sort(columns: [\"Number of Calls\"], desc: true)",
             "range": null,
             "shifts": null
           },
