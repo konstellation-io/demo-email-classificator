@@ -6,7 +6,7 @@ protoc -I=./classificator \
   classificator/*.proto
 
 protoc -I=./classificator \
-  --go_out=classificator/src/email_filter/proto \
+  --go_out=classificator/src/repairs_handler/proto \
   --go_out=classificator/src/stats_storer/proto \
   --go_out=classificator/src/exitpoint/proto \
   --go_opt=paths=source_relative classificator/*.proto \

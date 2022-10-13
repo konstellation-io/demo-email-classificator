@@ -28,9 +28,9 @@ echo "Building Stats Storer node Golang binary..."
 cd classificator/src/stats_storer
 go build -o ../../bin/stats_storer .
 
-echo "Building Email Filter node Golang binary..."
-cd ../email_filter
-go build -o ../../bin/email_filter .
+echo "Building Repairs Handler node Golang binary..."
+cd ../repairs_handler
+go build -o ../../bin/repairs_handler .
 
 echo "Building Exitpoint node Golang binary..."
 cd ../exitpoint

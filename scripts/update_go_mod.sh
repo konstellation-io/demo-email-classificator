@@ -1,7 +1,7 @@
 #!/bin/bash
 
-echo "Tidy email_filter node go.mod..."
-cd classificator/src/email_filter
+echo "Tidy repairs_handler node go.mod..."
+cd classificator/src/repairs_handler
 go mod tidy
 
 echo "Tidy stats_storer node go.mod...."
