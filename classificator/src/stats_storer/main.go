@@ -36,12 +36,6 @@ func storeMetrics(ctx *kre.HandlerContext, emailClass string) {
 	}
 
 	ctx.Measurement.Save("classified_emails", fields, tags)
-
-	fields = map[string]interface{}{
-		"called_node": "stats_storer",
-	}
-
-	ctx.Measurement.Save("number_of_calls", fields, tags)
 }
 
 func main() {
