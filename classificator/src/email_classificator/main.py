@@ -7,10 +7,12 @@ from proto.internal_nodes_pb2 import EtlOutput, EmailCategory, Email, CATEGORY_A
 async def default_handler(ctx, req):
     if ctx.is_request_early_reply():
         return
+
     etl_output = EtlOutput()
     req.Unpack(etl_output)
     email = etl_output.email
     category = classify_email(email)
+
     res = ClassificatorOutput()
     res.email.CopyFrom(email)
     res.category = category
