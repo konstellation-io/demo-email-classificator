@@ -233,7 +233,7 @@
       "name": "Activity Plot",
       "queries": [
         {
-          "query": "from(bucket: \"demo/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"number_of_calls\" )\n  |> keep(columns: [\"_time\"])\n  |> map(fn: (r) => ({ r with _value: 1 }))\n  |> group()\n  |> aggregateWindow(every: autoInterval, fn: sum)",
+          "query": "from(bucket: \"demo/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"node_elapsed_time\" )\n  |> keep(columns: [\"_time\"])\n  |> map(fn: (r) => ({ r with _value: 1 }))\n  |> group()\n  |> aggregateWindow(every: autoInterval, fn: sum)",
           "queryConfig": {
             "database": "",
             "measurement": "",
@@ -245,7 +245,7 @@
               "tags": []
             },
             "areTagsAccepted": false,
-            "rawText": "from(bucket: \"demo/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"number_of_calls\" )\n  |> keep(columns: [\"_time\"])\n  |> map(fn: (r) => ({ r with _value: 1 }))\n  |> group()\n  |> aggregateWindow(every: autoInterval, fn: sum)",
+            "rawText": "from(bucket: \"demo/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"node_elapsed_time\" )\n  |> keep(columns: [\"_time\"])\n  |> map(fn: (r) => ({ r with _value: 1 }))\n  |> group()\n  |> aggregateWindow(every: autoInterval, fn: sum)",
             "range": null,
             "shifts": null
           },
