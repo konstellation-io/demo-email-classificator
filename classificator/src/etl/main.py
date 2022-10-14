@@ -18,9 +18,11 @@ def init(ctx):
 async def default_handler(ctx, _):
     ctx.logger.info("[executing default handler]")
     emails = ctx.get("emails")
+
     res = Response()
-    res.message = "Email processing in progress"
+    res.message = f"Processing of {len(emails)} emails in progress"
     await ctx.early_reply(res)
+
     for email in emails:
         etl_output = EtlOutput()
         etl_output.email.CopyFrom(email)
