@@ -3,6 +3,7 @@ package main
 import (
 	"exitpoint/proto"
 	"fmt"
+
 	"github.com/konstellation-io/kre-runners/kre-go"
 	protobuf "google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/anypb"
@@ -20,7 +21,7 @@ func defaultHandler(ctx *kre.HandlerContext, _ *anypb.Any) error {
 func etlHandler(ctx *kre.HandlerContext, data *anypb.Any) error {
 	ctx.Logger.Info("[executing etl handler]")
 
-	if ctx.GetRequestMessageType() == kre.MessageType_EARLY_REPLY {
+	if ctx.IsMessageEarlyReply() {
 		ctx.SendAny(data)
 	}
 

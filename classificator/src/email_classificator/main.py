@@ -1,11 +1,19 @@
 import random
 
-from proto.internal_nodes_pb2 import EtlOutput, EmailCategory, Email, CATEGORY_ADMINISTRATION, CATEGORY_REPARATIONS, \
-    CATEGORY_BILLING, CATEGORY_SPAM, ClassificatorOutput
+from proto.internal_nodes_pb2 import (
+    EtlOutput,
+    EmailCategory,
+    Email,
+    CATEGORY_ADMINISTRATION,
+    CATEGORY_REPARATIONS,
+    CATEGORY_BILLING,
+    CATEGORY_SPAM,
+    ClassificatorOutput,
+)
 
 
 async def default_handler(ctx, req):
-    if ctx.is_request_early_reply():
+    if ctx.is_message_early_reply():
         return
     etl_output = EtlOutput()
     req.Unpack(etl_output)

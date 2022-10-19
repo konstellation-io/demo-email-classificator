@@ -20,7 +20,7 @@ async def default_handler(ctx, _):
     emails = ctx.get("emails")
     res = Response()
     res.message = "Email processing in progress"
-    await ctx.early_reply(res)
+    await ctx.send_early_reply(res)
     for email in emails:
         etl_output = EtlOutput()
         etl_output.email.CopyFrom(email)
