@@ -41,7 +41,7 @@ cd ../../..
 echo "Generating $VERSION.krt..."
 
 mkdir -p build/${VERSION_DIR}
-rm ./build/${VERSION_DIR}/{docs,src,assets,models,*.proto,*.yml} -rf
+rm -rf ./build/${VERSION_DIR}/{docs,src,assets,models,*.proto,*.yml} || true
 
 cd build/${VERSION_DIR}
 
@@ -51,6 +51,6 @@ yq eval --inplace -- ".version = \"${VERSION}\"" ./krt.yml
 
 tar -zcf ../${VERSION}.krt  --exclude=*.krt --exclude=*.tar.gz *
 cd ../../
-rm  build/${VERSION_DIR} -rf
+rm -rf build/${VERSION_DIR} || true
 
 echo "Done"
