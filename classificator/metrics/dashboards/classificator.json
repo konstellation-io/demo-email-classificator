@@ -2,128 +2,9 @@
   "id": "1",
   "cells": [
     {
-      "i": "482e0fbf-f5a3-4ee5-a96c-06e552dc3a6b",
-      "x": 6,
-      "y": 8,
-      "w": 6,
-      "h": 3,
-      "name": "Workflows Processing Time (ms)",
-      "queries": [
-        {
-          "query": "from(bucket: \"demo/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"workflow_elapsed_time\" and (r._field == \"elapsed_ms\"))\n  |> keep(columns: [\"version\", \"workflow\", \"_value\"])\n  |> group(columns: [\"workflow\", \"version\"])\n  |> reduce(fn: (r, accumulator) => ({\n    min: if r._value < accumulator.min then r._value else accumulator.min,\n    max: if r._value > accumulator.max then r._value else accumulator.max,\n    total: r._value + accumulator.total,\n    count: accumulator.count + 1.0\n   }), identity: {min: 999999999.0, max: 0.0, total: 0.0, count: 0.0})\n  |> map(fn: (r) => ({ r with avg: r.total / r.count }))\n  |> drop(columns: [\"count\"])\n  |> group(columns: [\"workflow\"])\n  |> map(fn: (r) => ({ \"1\": r.workflow, \"2\": r.version, \"3\": r.min, \"4\": r.max, \"5\": r.avg, \"6\": r.total})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Workflow\", \"2\": \"Version\", \"3\": \"Min\", \"4\": \"Max\", \"5\": \"Avg\", \"6\": \"Total\" })",
-          "queryConfig": {
-            "database": "",
-            "measurement": "",
-            "retentionPolicy": "",
-            "fields": [],
-            "tags": {},
-            "groupBy": {
-              "time": "",
-              "tags": []
-            },
-            "areTagsAccepted": false,
-            "rawText": "from(bucket: \"demo/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"workflow_elapsed_time\" and (r._field == \"elapsed_ms\"))\n  |> keep(columns: [\"version\", \"workflow\", \"_value\"])\n  |> group(columns: [\"workflow\", \"version\"])\n  |> reduce(fn: (r, accumulator) => ({\n    min: if r._value < accumulator.min then r._value else accumulator.min,\n    max: if r._value > accumulator.max then r._value else accumulator.max,\n    total: r._value + accumulator.total,\n    count: accumulator.count + 1.0\n   }), identity: {min: 999999999.0, max: 0.0, total: 0.0, count: 0.0})\n  |> map(fn: (r) => ({ r with avg: r.total / r.count }))\n  |> drop(columns: [\"count\"])\n  |> group(columns: [\"workflow\"])\n  |> map(fn: (r) => ({ \"1\": r.workflow, \"2\": r.version, \"3\": r.min, \"4\": r.max, \"5\": r.avg, \"6\": r.total})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Workflow\", \"2\": \"Version\", \"3\": \"Min\", \"4\": \"Max\", \"5\": \"Avg\", \"6\": \"Total\" })",
-            "range": null,
-            "shifts": null
-          },
-          "source": "",
-          "type": "flux"
-        }
-      ],
-      "axes": {
-        "x": {
-          "bounds": ["", ""],
-          "label": "",
-          "prefix": "",
-          "suffix": "",
-          "base": "10",
-          "scale": "linear"
-        },
-        "y": {
-          "bounds": ["", ""],
-          "label": "",
-          "prefix": "",
-          "suffix": "",
-          "base": "10",
-          "scale": "linear"
-        },
-        "y2": {
-          "bounds": ["", ""],
-          "label": "",
-          "prefix": "",
-          "suffix": "",
-          "base": "10",
-          "scale": "linear"
-        }
-      },
-      "type": "table",
-      "colors": [
-        {
-          "id": "base",
-          "type": "text",
-          "hex": "#00C9FF",
-          "name": "laser",
-          "value": "-1000000000000000000"
-        }
-      ],
-      "legend": {},
-      "tableOptions": {
-        "verticalTimeAxis": true,
-        "sortBy": {
-          "internalName": "time",
-          "displayName": "",
-          "visible": true
-        },
-        "wrapping": "truncate",
-        "fixFirstColumn": true
-      },
-      "fieldOptions": [
-        {
-          "internalName": "Workflow",
-          "displayName": "",
-          "visible": true
-        },
-        {
-          "internalName": "Version",
-          "displayName": "",
-          "visible": true
-        },
-        {
-          "internalName": "Min",
-          "displayName": "",
-          "visible": true
-        },
-        {
-          "internalName": "Max",
-          "displayName": "",
-          "visible": true
-        },
-        {
-          "internalName": "Avg",
-          "displayName": "",
-          "visible": true
-        },
-        {
-          "internalName": "Total",
-          "displayName": "",
-          "visible": true
-        }
-      ],
-      "timeFormat": "MM/DD/YYYY HH:mm:ss",
-      "decimalPlaces": {
-        "isEnforced": true,
-        "digits": 2
-      },
-      "note": "",
-      "noteVisibility": "default",
-      "links": {
-        "self": "/chronograf/v1/dashboards/47/cells/482e0fbf-f5a3-4ee5-a96c-06e552dc3a6b"
-      }
-    },
-    {
-      "i": "d59ed7ef-c371-473b-a402-480a2c491020",
+      "i": "fd906621-635c-4943-90ef-be14e3dd84d4",
       "x": 4,
-      "y": 3,
+      "y": 0,
       "w": 8,
       "h": 5,
       "name": "Number of Results per Request",
@@ -221,15 +102,15 @@
       "note": "",
       "noteVisibility": "default",
       "links": {
-        "self": "/chronograf/v1/dashboards/47/cells/d59ed7ef-c371-473b-a402-480a2c491020"
+        "self": "/chronograf/v1/dashboards/5/cells/fd906621-635c-4943-90ef-be14e3dd84d4"
       }
     },
     {
-      "i": "1ef95919-7aa0-4594-9a37-a1e180bbe46e",
-      "x": 4,
-      "y": 0,
-      "w": 8,
-      "h": 3,
+      "i": "377e7df6-b0d8-4227-90e2-8a1eb1c17901",
+      "x": 0,
+      "y": 9,
+      "w": 12,
+      "h": 4,
       "name": "Activity Plot",
       "queries": [
         {
@@ -334,19 +215,19 @@
       "note": "",
       "noteVisibility": "default",
       "links": {
-        "self": "/chronograf/v1/dashboards/47/cells/1ef95919-7aa0-4594-9a37-a1e180bbe46e"
+        "self": "/chronograf/v1/dashboards/5/cells/377e7df6-b0d8-4227-90e2-8a1eb1c17901"
       }
     },
     {
-      "i": "5b4fd2b2-ecbf-4434-b815-c5ef88d9a77e",
-      "x": 0,
-      "y": 8,
-      "w": 6,
-      "h": 3,
+      "i": "b036eacc-b58a-4af3-bbd4-869e99e66b8a",
+      "x": 4,
+      "y": 5,
+      "w": 8,
+      "h": 4,
       "name": "Nodes Processing Time (ms)",
       "queries": [
         {
-          "query": "from(bucket: \"demo/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"node_elapsed_time\" and (r._field == \"elapsed_ms\"))\n  |> keep(columns: [\"node\", \"workflow\", \"_value\"])\n  |> group(columns: [\"workflow\", \"node\"])\n  |> reduce(fn: (r, accumulator) => ({\n    min: if r._value < accumulator.min then r._value else accumulator.min,\n    max: if r._value > accumulator.max then r._value else accumulator.max,\n    total: r._value + accumulator.total,\n    count: accumulator.count + 1.0\n   }), identity: {min: 999999999.0, max: 0.0, total: 0.0, count: 0.0})\n  |> map(fn: (r) => ({ r with avg: r.total / r.count }))\n  |> drop(columns: [\"count\"])\n  |> group(columns: [\"workflow\"])\n  |> map(fn: (r) => ({ \"1\": r.workflow, \"2\": r.node, \"3\": r.min, \"4\": r.max, \"5\": r.avg, \"6\": r.total})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Workflow\", \"2\": \"Node\", \"3\": \"Min\", \"4\": \"Max\", \"5\": \"Avg\", \"6\": \"Total\" })",
+          "query": "from(bucket: \"demo/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"node_elapsed_time\" and (r._field == \"elapsed_ms\"))\n  |> keep(columns: [\"node\", \"workflow\", \"_value\"])\n  |> group(columns: [\"workflow\", \"node\"])\n  |> reduce(fn: (r, accumulator) => ({\n    min: if r._value < accumulator.min then r._value else accumulator.min,\n    max: if r._value > accumulator.max then r._value else accumulator.max,\n    total: r._value + accumulator.total,\n    count: accumulator.count + 1.0\n   }), identity: {min: 999999999.0, max: 0.0, total: 0.0, count: 0.0})\n  |> map(fn: (r) => ({ r with avg: r.total / r.count }))\n  |> drop(columns: [\"count\"])\n  |> group(columns: [\"workflow\"])\n  |> map(fn: (r) => ({ \"1\": r.workflow, \"2\": r.node, \"3\": r.min, \"4\": r.max, \"5\": r.avg, \"6\": r.total})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Workflow\", \"2\": \"Node\", \"3\": \"Min\", \"4\": \"Max\", \"5\": \"Avg\", \"6\": \"Total execution time\" })",
           "queryConfig": {
             "database": "",
             "measurement": "",
@@ -358,7 +239,7 @@
               "tags": []
             },
             "areTagsAccepted": false,
-            "rawText": "from(bucket: \"demo/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"node_elapsed_time\" and (r._field == \"elapsed_ms\"))\n  |> keep(columns: [\"node\", \"workflow\", \"_value\"])\n  |> group(columns: [\"workflow\", \"node\"])\n  |> reduce(fn: (r, accumulator) => ({\n    min: if r._value < accumulator.min then r._value else accumulator.min,\n    max: if r._value > accumulator.max then r._value else accumulator.max,\n    total: r._value + accumulator.total,\n    count: accumulator.count + 1.0\n   }), identity: {min: 999999999.0, max: 0.0, total: 0.0, count: 0.0})\n  |> map(fn: (r) => ({ r with avg: r.total / r.count }))\n  |> drop(columns: [\"count\"])\n  |> group(columns: [\"workflow\"])\n  |> map(fn: (r) => ({ \"1\": r.workflow, \"2\": r.node, \"3\": r.min, \"4\": r.max, \"5\": r.avg, \"6\": r.total})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Workflow\", \"2\": \"Node\", \"3\": \"Min\", \"4\": \"Max\", \"5\": \"Avg\", \"6\": \"Total\" })",
+            "rawText": "from(bucket: \"demo/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"node_elapsed_time\" and (r._field == \"elapsed_ms\"))\n  |> keep(columns: [\"node\", \"workflow\", \"_value\"])\n  |> group(columns: [\"workflow\", \"node\"])\n  |> reduce(fn: (r, accumulator) => ({\n    min: if r._value < accumulator.min then r._value else accumulator.min,\n    max: if r._value > accumulator.max then r._value else accumulator.max,\n    total: r._value + accumulator.total,\n    count: accumulator.count + 1.0\n   }), identity: {min: 999999999.0, max: 0.0, total: 0.0, count: 0.0})\n  |> map(fn: (r) => ({ r with avg: r.total / r.count }))\n  |> drop(columns: [\"count\"])\n  |> group(columns: [\"workflow\"])\n  |> map(fn: (r) => ({ \"1\": r.workflow, \"2\": r.node, \"3\": r.min, \"4\": r.max, \"5\": r.avg, \"6\": r.total})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Workflow\", \"2\": \"Node\", \"3\": \"Min\", \"4\": \"Max\", \"5\": \"Avg\", \"6\": \"Total execution time\" })",
             "range": null,
             "shifts": null
           },
@@ -453,15 +334,15 @@
       "note": "",
       "noteVisibility": "default",
       "links": {
-        "self": "/chronograf/v1/dashboards/47/cells/5b4fd2b2-ecbf-4434-b815-c5ef88d9a77e"
+        "self": "/chronograf/v1/dashboards/5/cells/b036eacc-b58a-4af3-bbd4-869e99e66b8a"
       }
     },
     {
-      "i": "e5e12e2d-4652-41c3-9504-d94716cfaa05",
+      "i": "31dfc8a1-0623-4d2f-aa5e-2d08efc7a215",
       "x": 0,
       "y": 0,
       "w": 4,
-      "h": 8,
+      "h": 9,
       "name": "Number of Calls for Each Node",
       "queries": [
         {
@@ -557,7 +438,7 @@
       "note": "",
       "noteVisibility": "default",
       "links": {
-        "self": "/chronograf/v1/dashboards/47/cells/e5e12e2d-4652-41c3-9504-d94716cfaa05"
+        "self": "/chronograf/v1/dashboards/5/cells/31dfc8a1-0623-4d2f-aa5e-2d08efc7a215"
       }
     }
   ],
