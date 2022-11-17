@@ -2,6 +2,120 @@
   "id": "1",
   "cells": [
     {
+      "i": "10fe4d68-4a2d-495d-bc6f-a0d38e1bf8b9",
+      "x": 0,
+      "y": 0,
+      "w": 4,
+      "h": 9,
+      "name": "Number of Calls for Each Node",
+      "queries": [
+        {
+          "query": "from(bucket: \"demo/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"node_elapsed_time\" and ((r._field == \"elapsed_ms\") or (r._field == \"success\")))\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> duplicate(column: \"node\", as: \"node\")\n  |> group(columns: [\"node\", \"version\"])\n  |> keep(columns: [\"node\", \"workflow\", \"version\", \"elapsed_ms\", \"success\"])\n  |> reduce(fn: (r, accumulator) => ({\n   success: if r.success == true then accumulator.success + 1 else accumulator.success,\n   fail: if r.fail == true then accumulator.fail + 1 else accumulator.fail,\n   total: accumulator.total +1,\n   }), identity: {total: 0, success: 0, fail: 0})\n  |> group(columns: [\"version\"])\n  |> map(fn: (r) => ({ \"1\": r.version, \"2\": r.node, \"3\": r.total, \"4\": r.success, \"5\": r.fail})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Version\", \"2\": \"Called Node\", \"3\": \"Number of Calls\", \"4\": \"Number of success\", \"5\": \"Number of fails\"})\n  |> sort(columns: [\"Version\"], desc: false)\n  |> sort(columns: [\"Called Node\"], desc: false)",
+          "queryConfig": {
+            "database": "",
+            "measurement": "",
+            "retentionPolicy": "",
+            "fields": [],
+            "tags": {},
+            "groupBy": {
+              "time": "",
+              "tags": []
+            },
+            "areTagsAccepted": false,
+            "rawText": "from(bucket: \"demo/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"node_elapsed_time\" and ((r._field == \"elapsed_ms\") or (r._field == \"success\")))\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> duplicate(column: \"node\", as: \"node\")\n  |> group(columns: [\"node\", \"version\"])\n  |> keep(columns: [\"node\", \"workflow\", \"version\", \"elapsed_ms\", \"success\"])\n  |> reduce(fn: (r, accumulator) => ({\n   success: if r.success == true then accumulator.success + 1 else accumulator.success,\n   fail: if r.fail == true then accumulator.fail + 1 else accumulator.fail,\n   total: accumulator.total +1,\n   }), identity: {total: 0, success: 0, fail: 0})\n  |> group(columns: [\"version\"])\n  |> map(fn: (r) => ({ \"1\": r.version, \"2\": r.node, \"3\": r.total, \"4\": r.success, \"5\": r.fail})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Version\", \"2\": \"Called Node\", \"3\": \"Number of Calls\", \"4\": \"Number of success\", \"5\": \"Number of fails\"})\n  |> sort(columns: [\"Version\"], desc: false)\n  |> sort(columns: [\"Called Node\"], desc: false)",
+            "range": null,
+            "shifts": null
+          },
+          "source": "",
+          "type": "flux"
+        }
+      ],
+      "axes": {
+        "x": {
+          "bounds": ["", ""],
+          "label": "",
+          "prefix": "",
+          "suffix": "",
+          "base": "10",
+          "scale": "linear"
+        },
+        "y": {
+          "bounds": ["", ""],
+          "label": "",
+          "prefix": "",
+          "suffix": "",
+          "base": "10",
+          "scale": "linear"
+        },
+        "y2": {
+          "bounds": ["", ""],
+          "label": "",
+          "prefix": "",
+          "suffix": "",
+          "base": "10",
+          "scale": "linear"
+        }
+      },
+      "type": "table",
+      "colors": [
+        {
+          "id": "base",
+          "type": "text",
+          "hex": "#00C9FF",
+          "name": "laser",
+          "value": "-1000000000000000000"
+        }
+      ],
+      "legend": {},
+      "tableOptions": {
+        "verticalTimeAxis": true,
+        "sortBy": {
+          "internalName": "time",
+          "displayName": "",
+          "visible": true
+        },
+        "wrapping": "truncate",
+        "fixFirstColumn": false
+      },
+      "fieldOptions": [
+        {
+          "internalName": "Version",
+          "displayName": "",
+          "visible": true
+        },
+        {
+          "internalName": "Called Node",
+          "displayName": "",
+          "visible": true
+        },
+        {
+          "internalName": "Number of Calls",
+          "displayName": "",
+          "visible": true
+        },
+        {
+          "internalName": "Number of success",
+          "displayName": "",
+          "visible": true
+        },
+        {
+          "internalName": "Number of fails",
+          "displayName": "",
+          "visible": true
+        }
+      ],
+      "timeFormat": "MM/DD/YYYY HH:mm:ss",
+      "decimalPlaces": {
+        "isEnforced": true,
+        "digits": 2
+      },
+      "note": "",
+      "noteVisibility": "default",
+      "links": {
+        "self": "/chronograf/v1/dashboards/5/cells/10fe4d68-4a2d-495d-bc6f-a0d38e1bf8b9"
+      }
+    },
+    {
       "i": "fd906621-635c-4943-90ef-be14e3dd84d4",
       "x": 4,
       "y": 0,
@@ -335,110 +449,6 @@
       "noteVisibility": "default",
       "links": {
         "self": "/chronograf/v1/dashboards/5/cells/b036eacc-b58a-4af3-bbd4-869e99e66b8a"
-      }
-    },
-    {
-      "i": "31dfc8a1-0623-4d2f-aa5e-2d08efc7a215",
-      "x": 0,
-      "y": 0,
-      "w": 4,
-      "h": 9,
-      "name": "Number of Calls for Each Node",
-      "queries": [
-        {
-          "query": "from(bucket: \"demo/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"node_elapsed_time\" and (r._field == \"elapsed_ms\"))\n  |> duplicate(column: \"node\", as: \"node\")\n  |> group(columns: [\"node\", \"version\"])\n  |> count()\n  |> group(columns: [\"version\"])\n  |> map(fn: (r) => ({ \"1\": r.version, \"2\": r.node, \"3\": r._value})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Version\", \"2\": \"Called Node\", \"3\": \"Number of Calls\"})\n  |> sort(columns: [\"Version\"], desc: false)\n  |> sort(columns: [\"Number of Calls\"], desc: true)",
-          "queryConfig": {
-            "database": "",
-            "measurement": "",
-            "retentionPolicy": "",
-            "fields": [],
-            "tags": {},
-            "groupBy": {
-              "time": "",
-              "tags": []
-            },
-            "areTagsAccepted": false,
-            "rawText": "from(bucket: \"demo/autogen\")\n  |> range(start: dashboardTime)\n  |> filter(fn: (r) => r._measurement == \"node_elapsed_time\" and (r._field == \"elapsed_ms\"))\n  |> duplicate(column: \"node\", as: \"node\")\n  |> group(columns: [\"node\", \"version\"])\n  |> count()\n  |> group(columns: [\"version\"])\n  |> map(fn: (r) => ({ \"1\": r.version, \"2\": r.node, \"3\": r._value})) // Hack due to no reorder column support\n  |> rename(columns: { \"1\": \"Version\", \"2\": \"Called Node\", \"3\": \"Number of Calls\"})\n  |> sort(columns: [\"Version\"], desc: false)\n  |> sort(columns: [\"Number of Calls\"], desc: true)",
-            "range": null,
-            "shifts": null
-          },
-          "source": "",
-          "type": "flux"
-        }
-      ],
-      "axes": {
-        "x": {
-          "bounds": ["", ""],
-          "label": "",
-          "prefix": "",
-          "suffix": "",
-          "base": "10",
-          "scale": "linear"
-        },
-        "y": {
-          "bounds": ["", ""],
-          "label": "",
-          "prefix": "",
-          "suffix": "",
-          "base": "10",
-          "scale": "linear"
-        },
-        "y2": {
-          "bounds": ["", ""],
-          "label": "",
-          "prefix": "",
-          "suffix": "",
-          "base": "10",
-          "scale": "linear"
-        }
-      },
-      "type": "table",
-      "colors": [
-        {
-          "id": "base",
-          "type": "text",
-          "hex": "#00C9FF",
-          "name": "laser",
-          "value": "-1000000000000000000"
-        }
-      ],
-      "legend": {},
-      "tableOptions": {
-        "verticalTimeAxis": true,
-        "sortBy": {
-          "internalName": "time",
-          "displayName": "",
-          "visible": true
-        },
-        "wrapping": "truncate",
-        "fixFirstColumn": false
-      },
-      "fieldOptions": [
-        {
-          "internalName": "Version",
-          "displayName": "",
-          "visible": true
-        },
-        {
-          "internalName": "Called Node",
-          "displayName": "",
-          "visible": true
-        },
-        {
-          "internalName": "Number of Calls",
-          "displayName": "",
-          "visible": true
-        }
-      ],
-      "timeFormat": "MM/DD/YYYY HH:mm:ss",
-      "decimalPlaces": {
-        "isEnforced": true,
-        "digits": 2
-      },
-      "note": "",
-      "noteVisibility": "default",
-      "links": {
-        "self": "/chronograf/v1/dashboards/5/cells/31dfc8a1-0623-4d2f-aa5e-2d08efc7a215"
       }
     }
   ],
