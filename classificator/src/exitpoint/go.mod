@@ -2,10 +2,8 @@ module exitpoint
 
 go 1.18
 
-replace github.com/konstellation-io/kre-runners/kre-go => ../../../../runners/kre-go
-
 require (
-	github.com/konstellation-io/kre-runners/kre-go v0.0.0-20220727095036-538cc325472b
+	github.com/konstellation-io/kre-runners/kre-go v0.0.0-20230102095441-8cb6b3c06d06
 	google.golang.org/protobuf v1.28.1
 )
 
