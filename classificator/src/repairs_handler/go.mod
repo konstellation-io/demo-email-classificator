@@ -3,7 +3,7 @@ module repairs_handler
 go 1.18
 
 require (
-	github.com/konstellation-io/kre-runners/kre-go v0.0.0-20230102095441-8cb6b3c06d06
+	github.com/konstellation-io/kre-runners/kre-go/v4 v4.2.0
 	google.golang.org/protobuf v1.28.1
 )
 

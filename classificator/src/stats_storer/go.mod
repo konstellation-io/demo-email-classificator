@@ -3,11 +3,9 @@ module stats_storer
 go 1.18
 
 require (
-	github.com/konstellation-io/kre-runners/kre-go v0.0.0-20230102095441-8cb6b3c06d06
+	github.com/konstellation-io/kre-runners/kre-go/v4 v4.2.0
 	google.golang.org/protobuf v1.28.1
 )
-
-require golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 
 require (
 	github.com/deepmap/oapi-codegen v1.3.6 // indirect
@@ -38,5 +36,6 @@ require (
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/sys v0.0.0-20220111092808-5a964db01320 // indirect
 	golang.org/x/text v0.3.6 // indirect
+	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	gopkg.in/yaml.v2 v2.2.8 // indirect
 )

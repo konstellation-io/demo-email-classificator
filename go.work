@@ -1,7 +1,7 @@
 go 1.18
 
 use (
-	./classificator/src/repairs_handler
 	./classificator/src/exitpoint
+	./classificator/src/repairs_handler
 	./classificator/src/stats_storer
 )
