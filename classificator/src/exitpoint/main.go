@@ -36,7 +36,15 @@ func statsStorerHandler(ctx *kre.HandlerContext, data *anypb.Any) error {
 	if err != nil {
 		return fmt.Errorf("invalid request: %s", err)
 	}
-	ctx.Logger.Info(statsStorerOutput.Message)
+	//ctx.Logger.Info(statsStorerOutput.Message)
+
+	obj, err := ctx.GetObject("emails")
+	if err != nil {
+		ctx.Logger.Errorf("error getting object: %s", err)
+	}
+
+	ctx.Logger.Infof("object found: %s", obj)
+	ctx.Logger.Infof("object found: %s", string(obj))
 
 	return nil
 }

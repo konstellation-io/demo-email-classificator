@@ -26,17 +26,17 @@ func handler(ctx *kre.HandlerContext, data *anypb.Any) error {
 		return fmt.Errorf("invalid request: %s", err)
 	}
 
-	storeMetrics(ctx, req.Category.String())
-	messageCounter := ctx.Get(messageCounterKey).(int)
-	messageCounter = (messageCounter + 1) % 50
-	if messageCounter == 0 {
-		res := &proto.StatsStorerOutput{Message: "50 messages processed"}
-		err := ctx.SendOutput(res)
-		if err != nil {
-			ctx.Logger.Errorf("error publishing message: %w", err)
-		}
+	err = ctx.StoreObject("emails", []byte("this is a test"))
+	if err != nil {
+		ctx.Logger.Errorf("error storing object: %s", err)
 	}
-	ctx.Set(messageCounterKey, messageCounter)
+
+	storeMetrics(ctx, req.Category.String())
+	res := &proto.StatsStorerOutput{Message: "50 messages processed"}
+	err = ctx.SendOutput(res)
+	if err != nil {
+		ctx.Logger.Errorf("error publishing message: %s", err)
+	}
 	return nil
 }
 
