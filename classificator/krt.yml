@@ -15,31 +15,35 @@ workflows:
         image: konstellation/kre-py:latest
         src: src/etl/main.py
         subscriptions:
-          - "entrypoint"
+          - 'entrypoint'
 
       - name: email-classificator
         image: konstellation/kre-py:latest
         src: src/email_classificator/main.py
         subscriptions:
-          - "etl"
+          - 'etl'
 
       - name: repairs-handler
         image: konstellation/kre-go:latest
         src: bin/repairs_handler
         subscriptions:
-          - "email-classificator.repairs"
+          - 'email-classificator.repairs'
 
       - name: stats-storer
         image: konstellation/kre-go:latest
         src: bin/stats_storer
-        objectStore: emails
+        objectStore:
+          name: emails
+          scope: workflow
         subscriptions:
-          - "email-classificator"
+          - 'email-classificator'
 
       - name: exitpoint
         image: konstellation/kre-go:latest
         src: bin/exitpoint
-        objectStore: emails
+        objectStore:
+          name: emails
+          scope: workflow
         subscriptions:
-          - "etl"
-          - "stats-storer"
+          - 'etl'
+          - 'stats-storer'
