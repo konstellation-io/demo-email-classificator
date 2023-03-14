@@ -1,4 +1,4 @@
-# kai-server-training
+# demo-email-classificator
 
 ## How to build your .krt file
 
@@ -12,6 +12,6 @@
 Here are some examples:  
 
 ``` sh
-./scripts/run_test.sh kre descriptor-v1 Classificator 1
-./scripts/run_test.sh kre descriptor-v1 Classificator 1
+./scripts/run_test.sh kre demo classificator-v1 Classificator 1
+./scripts/run_test.sh kre demo classificator-v1 Classificator 1
 ```
