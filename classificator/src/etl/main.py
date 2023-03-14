@@ -7,7 +7,7 @@ from proto.internal_nodes_pb2 import EtlOutput, Email
 def init(ctx):
     ctx.logger.info("[executing init]")
     emails = []
-    with open(ctx.path("src/etl/emails_high_load.csv")) as csvfile:
+    with open(ctx.path("src/etl/emails.csv")) as csvfile:
         rows = csv.DictReader(csvfile)
         for row in rows:
             emails.append(dict_to_email(row))
