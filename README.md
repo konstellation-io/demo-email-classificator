@@ -17,7 +17,7 @@
 
 ## Generate protobuf code
 
-Execute the following script if chenges occur in `.proto` files.
+Execute the following script if changes occur in `.proto` files.
 
 ```sh
 ./scripts/generate_protobuf_code.sh
