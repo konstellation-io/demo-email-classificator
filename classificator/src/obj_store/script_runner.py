@@ -1,5 +1,7 @@
+import os
 from datetime import datetime
 
+import nats
 from nats.js.api import StorageType, ObjectMeta, ObjectMetaOptions, ObjectStoreConfig
 
 
@@ -13,31 +15,34 @@ async def default_handler(ctx, _):
     bucket_name = "foo"
     storage_type = StorageType.MEMORY
     num_gb = 1  # change this to generate larger (or smaller) payloads
-    payload = b'x' * 1024 * 1024 * 1024 * num_gb
+    payload = b'x' * int(1024 * 1024 * 1024 * num_gb)
 
     ometaopts = ObjectMetaOptions(max_chunk_size=max_chunk_size)
     ometa = ObjectMeta(name=obj_name, options=ometaopts)
     oscfg = ObjectStoreConfig(bucket=bucket_name, storage=storage_type)
 
-    os = await ctx.js.create_object_store(config=oscfg)
+    nc = await nats.connect(servers=[f"nats://{os.environ['KRT_NATS_SERVER']}"])
+    js = nc.jetstream()
+
+    objstore = await js.create_object_store(config=oscfg)
 
     now = datetime.now()
-    await os.put(meta=ometa, data=payload)
-    ctx.logger.info("put: ", datetime.now() - now)
+    await objstore.put(meta=ometa, data=payload)
+    ctx.logger.info("put: %s", datetime.now() - now)
 
     now = datetime.now()
-    obj_info = await os.get(name=obj_name)
-    ctx.logger.info("get: ", datetime.now() - now)
-    ctx.logger.info("info: ", obj_info)
+    obj_info = await objstore.get(name=obj_name)
+    ctx.logger.info("get: %s", datetime.now() - now)
+    ctx.logger.info("info: %s", obj_info)
 
     now = datetime.now()
-    await os.delete(name=obj_name)
-    ctx.logger.info("delete: ", datetime.now() - now)
+    await objstore.delete(name=obj_name)
+    ctx.logger.info("delete: %s", datetime.now() - now)
 
     now = datetime.now()
-    obj_info = await os.get(name=obj_name)
-    ctx.logger.info("get (after delete): ", datetime.now() - now)
-    ctx.logger.info("info: ", obj_info)
+    obj_info = await objstore.get(name=obj_name)
+    ctx.logger.info("get (after delete): %s", datetime.now() - now)
+    ctx.logger.info("info: %s", obj_info)
 
-    if not (await ctx.js.delete_object_store(bucket=bucket_name)):
+    if not (await js.delete_object_store(bucket=bucket_name)):
         ctx.logger.warning("Object Store %s could not be deleted", bucket_name)
