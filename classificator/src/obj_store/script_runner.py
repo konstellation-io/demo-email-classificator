@@ -13,9 +13,9 @@ async def default_handler(ctx, _):
     max_chunk_size = 1024 * 1024  # 1MB
     obj_name = "foo.txt"
     bucket_name = "foo"
-    storage_type = StorageType.MEMORY
-    num_gb = 1  # change this to generate larger (or smaller) payloads
-    payload = b'x' * int(1024 * 1024 * 1024 * num_gb)
+    storage_type = StorageType.FILE
+    num_gb = 0.8  # change this to generate larger (or smaller) payloads
+    payload = b"x" * int(1024 * 1024 * 1024 * num_gb)
 
     ometaopts = ObjectMetaOptions(max_chunk_size=max_chunk_size)
     ometa = ObjectMeta(name=obj_name, options=ometaopts)
