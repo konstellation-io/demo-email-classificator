@@ -52,7 +52,7 @@ workflows:
     entrypoint: BatchClassificator
     exitpoint: exitpoint
     nodes:
-      - name: etl-go
+      - name: etl
         image: konstellation/kre-go:latest
         src: bin/etl
         objectStore:
@@ -68,7 +68,7 @@ workflows:
           name: emails
           scope: workflow
         subscriptions:
-          - 'etl-go'
+          - 'etl'
 
       - name: repairs-handler
         image: konstellation/kre-go:latest
@@ -92,5 +92,5 @@ workflows:
           name: emails
           scope: workflow
         subscriptions:
-          - 'etl-go'
+          - 'etl'
           - 'stats-storer'

@@ -31,6 +31,8 @@ func handler(ctx *kre.HandlerContext, data *anypb.Any) error {
 		return fmt.Errorf("invalid request: %s", err)
 	}
 
+	ctx.Logger.Infof("Classifying batch %q", req.ObjectKey)
+
 	emailsBatch, err := ctx.ObjectStore.Get(req.ObjectKey)
 	if err != nil {
 		return fmt.Errorf("error getting emails batch from object store: %w", err)

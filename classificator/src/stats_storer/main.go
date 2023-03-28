@@ -26,7 +26,7 @@ func handler(ctx *kre.HandlerContext, data *anypb.Any) error {
 	}
 
 	storeMetrics(ctx, req.Category.String())
-	res := &proto.StatsStorerOutput{Message: "50 messages processed"}
+	res := &proto.StatsStorerOutput{Message: "Messages processed"}
 	err = ctx.SendOutput(res)
 	if err != nil {
 		ctx.Logger.Errorf("error publishing message: %s", err)

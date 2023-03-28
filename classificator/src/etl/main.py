@@ -1,23 +1,24 @@
 import csv
 
-from proto.public_input_pb2 import Response
-from proto.internal_nodes_pb2 import EtlOutput, Email
+from proto.public_input_pb2 import ClassificatorRequest, Response
+from proto.internal_nodes_pb2 import Email, EtlOutput
 
 
 def init(ctx):
     ctx.logger.info("[executing init]")
+
+
+async def default_handler(ctx, req):
+    ctx.logger.info("[executing default handler]")
+
+    data = ClassificatorRequest()
+    req.Unpack(ClassificatorRequest)
+
     emails = []
-    with open(ctx.path("src/etl/emails.csv")) as csvfile:
+    with open(ctx.path(data.filename)) as csvfile:
         rows = csv.DictReader(csvfile)
         for row in rows:
             emails.append(dict_to_email(row))
-    ctx.set("emails", emails)
-    ctx.logger.info("[init] emails csv loaded")
-
-
-async def default_handler(ctx, _):
-    ctx.logger.info("[executing default handler]")
-    emails = ctx.get("emails")
 
     res = Response()
     res.message = f"Processing of {len(emails)} emails in progress"

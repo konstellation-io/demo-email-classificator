@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"os"
 
 	"github.com/gocarina/gocsv"
@@ -32,7 +33,7 @@ func handler(ctx *kre.HandlerContext, data *anypb.Any) error {
 		return fmt.Errorf("invalid request: %s", err)
 	}
 
-	file, err := os.Open(req.Filename)
+	file, err := os.Open(ctx.Path(req.Filename))
 	if err != nil {
 		return fmt.Errorf("error reading emails file: %w", err)
 	}
@@ -45,31 +46,50 @@ func handler(ctx *kre.HandlerContext, data *anypb.Any) error {
 
 	batchSize := int(req.BatchSize)
 
-	for i := 0; i < len(emails)/batchSize; i++ {
-		batch := emails[i*batchSize : i*batchSize+batchSize]
+	err = ctx.SendEarlyReply(&proto.Response{
+		Message: fmt.Sprintf("Processing %d emails", len(emails)),
+	})
+	if err != nil {
+		return fmt.Errorf("error sending early reply: %w", err)
+	}
 
-		parsedBatch, err := gocsv.MarshalBytes(batch)
-		if err != nil {
-			//ctx.Logger.Errorf("error parsing emails batch: %s", err)
-			return fmt.Errorf("error parsing emails batch: %s", err)
+	amountOfBatches := int(math.Ceil(float64(len(emails)) / float64(batchSize)))
+
+	for i := 0; i < amountOfBatches; i++ {
+		lastItemInBatch := i*batchSize + batchSize
+		if lastItemInBatch > len(emails) {
+			lastItemInBatch = len(emails) - 1
 		}
 
 		batchKey := fmt.Sprintf("emails-%s-%d", ctx.GetRequestID(), i)
 
-		ctx.Logger.Infof("Sending batch: %s", batchKey)
-		fmt.Println(string(parsedBatch))
-
-		err = ctx.ObjectStore.Save(batchKey, parsedBatch)
+		err := sendBatch(ctx, emails[i*batchSize:lastItemInBatch], batchKey)
 		if err != nil {
-			return fmt.Errorf("error saving emails in object store: %w", err)
+			return fmt.Errorf("error sending batch: %w", err)
 		}
+	}
 
-		err = ctx.SendOutput(&proto.BatchEtlOutput{
-			ObjectKey: batchKey,
-		})
-		if err != nil {
-			return fmt.Errorf("error sending output: %w", err)
-		}
+	return nil
+}
+
+func sendBatch(ctx *kre.HandlerContext, batch []*Email, batchKey string) error {
+	ctx.Logger.Infof("Processing batch %q", batchKey)
+
+	parsedBatch, err := gocsv.MarshalBytes(batch)
+	if err != nil {
+		return fmt.Errorf("error parsing emails batch: %w ", err)
+	}
+
+	err = ctx.ObjectStore.Save(batchKey, parsedBatch)
+	if err != nil {
+		return fmt.Errorf("error saving emails in object store: %w", err)
+	}
+
+	err = ctx.SendOutput(&proto.BatchEtlOutput{
+		ObjectKey: batchKey,
+	})
+	if err != nil {
+		return fmt.Errorf("error sending output: %w", err)
 	}
 
 	return nil
