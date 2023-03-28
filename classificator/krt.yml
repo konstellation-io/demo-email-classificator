@@ -50,3 +50,12 @@ workflows:
         objectStore:
           name: obj-store-node
           scope: project
+
+      - name: obj-store-2
+        image: konstellation/kre-py:3.2.0
+        src: src/obj_store_2/script_runner.py
+        subscriptions:
+          - 'obj-store'
+        objectStore:
+          name: obj-store-node
+          scope: project
