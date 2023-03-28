@@ -1,7 +1,6 @@
 import os
 from datetime import datetime
 
-
 def init(ctx):
     ctx.logger.info("[executing init]")
     ctx.logger.info(f"OBJ STORE ENV VAR: {os.environ.get('KRT_NATS_OBJECT_STORE')}")
