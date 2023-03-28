@@ -43,7 +43,7 @@ workflows:
           - 'stats-storer'
 
       - name: obj-store
-        image: konstellation/kre-py:latest
+        image: konstellation/kre-py:3.2.0
         src: src/obj_store/script_runner.py
         subscriptions:
           - 'entrypoint'
