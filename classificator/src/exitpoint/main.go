@@ -38,7 +38,7 @@ func statsStorerHandler(ctx *kre.HandlerContext, data *anypb.Any) error {
 	}
 	//ctx.Logger.Info(statsStorerOutput.Message)
 
-	obj, err := ctx.GetObject("emails")
+	obj, err := ctx.ObjectStore.Get("emails")
 	if err != nil {
 		ctx.Logger.Errorf("error getting object: %s", err)
 	}

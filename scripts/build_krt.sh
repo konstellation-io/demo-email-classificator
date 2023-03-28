@@ -24,8 +24,17 @@ if [ -z "$VERSION" ]; then
   exit 1;
 fi
 
+echo "Building ETL node Golang binary..."
+cd classificator/src/etl_go
+go build -o ../../bin/etl .
+
+echo "Building Batch Classificator node Golang binary..."
+cd ../batch_email_classificator
+go build -o ../../bin/batch_email_classificator .
+
+
 echo "Building Stats Storer node Golang binary..."
-cd classificator/src/stats_storer
+cd ../stats_storer
 go build -o ../../bin/stats_storer .
 
 echo "Building Repairs Handler node Golang binary..."

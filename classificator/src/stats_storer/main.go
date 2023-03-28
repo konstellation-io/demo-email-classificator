@@ -14,7 +14,6 @@ const messageCounterKey = "messageCounter"
 
 func handlerInit(ctx *kre.HandlerContext) {
 	ctx.Logger.Info("[handler init]")
-	ctx.Set(messageCounterKey, 0)
 }
 
 func handler(ctx *kre.HandlerContext, data *anypb.Any) error {
@@ -24,11 +23,6 @@ func handler(ctx *kre.HandlerContext, data *anypb.Any) error {
 	err := anypb.UnmarshalTo(data, req, protobuf.UnmarshalOptions{})
 	if err != nil {
 		return fmt.Errorf("invalid request: %s", err)
-	}
-
-	err = ctx.StoreObject("emails", []byte("this is a test"))
-	if err != nil {
-		ctx.Logger.Errorf("error storing object: %s", err)
 	}
 
 	storeMetrics(ctx, req.Category.String())

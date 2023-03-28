@@ -1,8 +1,9 @@
-module exitpoint
+module email-classificator
 
-go 1.18
+go 1.19
 
 require (
+	github.com/gocarina/gocsv v0.0.0-20230325173030-9a18a846a479
 	github.com/konstellation-io/kre-runners/kre-go/v4 v4.2.0
 	google.golang.org/protobuf v1.30.0
 )

@@ -6,6 +6,8 @@ protoc -I=./classificator \
   classificator/*.proto
 
 protoc -I=./classificator \
+  --go_out=classificator/src/etl_go/proto \
+  --go_out=classificator/src/batch_email_classificator/proto \
   --go_out=classificator/src/repairs_handler/proto \
   --go_out=classificator/src/stats_storer/proto \
   --go_out=classificator/src/exitpoint/proto \

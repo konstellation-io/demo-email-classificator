@@ -10,7 +10,7 @@ VERSION=$3
 ENTRYPOINT_SERVICE=main.Entrypoint/${4:-"GoDescriptor"}
 DEFAULT_MESSAGES=1
 TOTAL_MESSAGES=${5:-$DEFAULT_MESSAGES}
-REQUEST_DATA='{}'
+REQUEST_DATA='{"batch_size": 10,"filename":"/krt-files/src/etl_go/emails.csv"}'
 SEND_CONCURRENT=1
 
 run_test() {
