@@ -14,12 +14,18 @@ workflows:
       - name: etl
         image: konstellation/kre-py:latest
         src: src/etl/main.py
+        objectStore:
+          name: emails
+          scope: workflow
         subscriptions:
           - 'entrypoint'
 
       - name: email-classificator
-        image: konstellation/kre-py:latest
-        src: src/email_classificator/main.py
+        image: konstellation/kre-go:latest
+        src: bin/batch_email_classificator
+        objectStore:
+          name: emails
+          scope: workflow
         subscriptions:
           - 'etl'
 

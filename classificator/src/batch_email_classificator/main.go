@@ -25,6 +25,10 @@ func handlerInit(ctx *kre.HandlerContext) {
 func handler(ctx *kre.HandlerContext, data *anypb.Any) error {
 	ctx.Logger.Info("[handler invoked]")
 
+	if ctx.IsMessageEarlyReply() {
+		return nil
+	}
+
 	req := &proto.BatchEtlOutput{}
 	err := anypb.UnmarshalTo(data, req, protobuf.UnmarshalOptions{})
 	if err != nil {

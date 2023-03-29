@@ -6,6 +6,7 @@ option go_package = "./proto";
 
 message ClassificatorRequest {
   string filename = 1;
+  int32 batch_size = 2;
 }
 
 message BatchClassificatorRequest {
