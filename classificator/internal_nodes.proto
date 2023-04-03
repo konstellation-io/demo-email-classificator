@@ -30,3 +30,7 @@ message ClassificatorOutput {
 message StatsStorerOutput {
   string message = 1;
 }
+
+message BatchEtlOutput {
+  string object_key = 1;
+}

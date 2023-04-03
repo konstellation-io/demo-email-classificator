@@ -14,30 +14,89 @@ workflows:
       - name: etl
         image: konstellation/kre-py:latest
         src: src/etl/main.py
+        objectStore:
+          name: emails
+          scope: workflow
         subscriptions:
-          - "entrypoint"
+          - 'entrypoint'
 
       - name: email-classificator
-        image: konstellation/kre-py:latest
-        src: src/email_classificator/main.py
+        image: konstellation/kre-go:latest
+        src: bin/batch_email_classificator
+        objectStore:
+          name: emails
+          scope: workflow
         subscriptions:
-          - "etl"
+          - 'etl'
 
       - name: repairs-handler
         image: konstellation/kre-go:latest
         src: bin/repairs_handler
         subscriptions:
-          - "email-classificator.repairs"
+          - 'email-classificator.repairs'
 
       - name: stats-storer
         image: konstellation/kre-go:latest
         src: bin/stats_storer
+        objectStore:
+          name: emails
+          scope: workflow
         subscriptions:
-          - "email-classificator"
+          - 'email-classificator'
 
       - name: exitpoint
         image: konstellation/kre-go:latest
         src: bin/exitpoint
+        objectStore:
+          name: emails
+          scope: workflow
         subscriptions:
-          - "etl"
-          - "stats-storer"
+          - 'etl'
+          - 'stats-storer'
+
+  - name: batch-classificator
+    entrypoint: BatchClassificator
+    exitpoint: exitpoint
+    nodes:
+      - name: etl
+        image: konstellation/kre-go:latest
+        src: bin/etl
+        objectStore:
+          name: emails
+          scope: workflow
+        subscriptions:
+          - 'entrypoint'
+
+      - name: batch-classificator
+        image: konstellation/kre-go:latest
+        src: bin/batch_email_classificator
+        objectStore:
+          name: emails
+          scope: workflow
+        subscriptions:
+          - 'etl'
+
+      - name: repairs-handler
+        image: konstellation/kre-go:latest
+        src: bin/repairs_handler
+        subscriptions:
+          - 'batch-classificator.repairs'
+
+      - name: stats-storer
+        image: konstellation/kre-go:latest
+        src: bin/stats_storer
+        objectStore:
+          name: emails
+          scope: workflow
+        subscriptions:
+          - 'batch-classificator'
+
+      - name: exitpoint
+        image: konstellation/kre-go:latest
+        src: bin/exitpoint
+        objectStore:
+          name: emails
+          scope: workflow
+        subscriptions:
+          - 'etl'
+          - 'stats-storer'

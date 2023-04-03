@@ -13,8 +13,9 @@ func handlerInit(ctx *kre.HandlerContext) {
 	ctx.Logger.Info("[handler init]")
 }
 
-func defaultHandler(ctx *kre.HandlerContext, _ *anypb.Any) error {
+func defaultHandler(ctx *kre.HandlerContext, data *anypb.Any) error {
 	ctx.Logger.Info("[executing default handler]")
+	ctx.SendAny(data)
 	return nil
 }
 
@@ -36,7 +37,6 @@ func statsStorerHandler(ctx *kre.HandlerContext, data *anypb.Any) error {
 	if err != nil {
 		return fmt.Errorf("invalid request: %s", err)
 	}
-	ctx.Logger.Info(statsStorerOutput.Message)
 
 	return nil
 }
