@@ -41,3 +41,5 @@ require (
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
+
+replace github.com/konstellation-io/kre-runners/kre-go/v4 => ../../../../runners/kre-go
