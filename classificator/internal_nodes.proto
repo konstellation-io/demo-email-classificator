@@ -19,7 +19,7 @@ message Email {
 }
 
 message EtlOutput {
-  Email email = 1;
+  string emails_key = 1;
 }
 
 message ClassificatorOutput {
@@ -29,8 +29,4 @@ message ClassificatorOutput {
 
 message StatsStorerOutput {
   string message = 1;
-}
-
-message BatchEtlOutput {
-  string object_key = 1;
 }

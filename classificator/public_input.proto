@@ -4,12 +4,7 @@ package main;
 
 option go_package = "./proto";
 
-message ClassificatorRequest {
-  string filename = 1;
-  int32 batch_size = 2;
-}
-
-message BatchClassificatorRequest {
+message Request {
   string filename = 1;
   int32 batch_size = 2;
 }
@@ -19,6 +14,6 @@ message Response {
 }
 
 service Entrypoint {
-  rpc Classificator (ClassificatorRequest) returns (Response) {};
-  rpc BatchClassificator (BatchClassificatorRequest) returns (Response) {};
+  rpc PyClassificator (Request) returns (Response) {};
+  rpc GoClassificator (Request) returns (Response) {};
 };

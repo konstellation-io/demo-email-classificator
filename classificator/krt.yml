@@ -7,13 +7,13 @@ entrypoint:
 config:
   variables:
 workflows:
-  - name: classificator
-    entrypoint: Classificator
+  - name: py-classificator
+    entrypoint: PyClassificator
     exitpoint: exitpoint
     nodes:
       - name: etl
         image: konstellation/kre-py:latest
-        src: src/etl/main.py
+        src: src/py-classificator/etl/main.py
         objectStore:
           name: emails
           scope: workflow
@@ -21,8 +21,8 @@ workflows:
           - 'entrypoint'
 
       - name: email-classificator
-        image: konstellation/kre-go:latest
-        src: bin/batch_email_classificator
+        image: konstellation/kre-py:latest
+        src: src/py-classificator/email_classificator/main.py
         objectStore:
           name: emails
           scope: workflow
@@ -54,8 +54,8 @@ workflows:
           - 'etl'
           - 'stats-storer'
 
-  - name: batch-classificator
-    entrypoint: BatchClassificator
+  - name: go-classificator
+    entrypoint: GoClassificator
     exitpoint: exitpoint
     nodes:
       - name: etl
@@ -67,9 +67,9 @@ workflows:
         subscriptions:
           - 'entrypoint'
 
-      - name: batch-classificator
+      - name: email-classificator
         image: konstellation/kre-go:latest
-        src: bin/batch_email_classificator
+        src: bin/email_classificator
         objectStore:
           name: emails
           scope: workflow
@@ -80,7 +80,7 @@ workflows:
         image: konstellation/kre-go:latest
         src: bin/repairs_handler
         subscriptions:
-          - 'batch-classificator.repairs'
+          - 'email-classificator.repairs'
 
       - name: stats-storer
         image: konstellation/kre-go:latest
@@ -89,7 +89,7 @@ workflows:
           name: emails
           scope: workflow
         subscriptions:
-          - 'batch-classificator'
+          - 'email-classificator'
 
       - name: exitpoint
         image: konstellation/kre-go:latest

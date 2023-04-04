@@ -8,6 +8,13 @@
 set -eu
 
 VERSION_DIR="classificator"
+ROOT_PATH=$PWD
+VERSION_PATH=$ROOT_PATH/$VERSION_DIR
+
+BIN_PATH="$VERSION_PATH/bin"
+GO_CLASSIFICATOR_PATH="$VERSION_PATH/src/go-classificator"
+COMMON_PATH="$VERSION_PATH/src/common"
+
 
 # NOTE: if yq commands fails it due to the awesome Snap installation that is confined (heavily restricted).
 # Please install yq binary from https://github.com/mikefarah/yq/releases and think twice before using Snap next time.
@@ -25,26 +32,25 @@ if [ -z "$VERSION" ]; then
 fi
 
 echo "Building ETL node Golang binary..."
-cd classificator/src/etl_go
-go build -o ../../bin/etl .
+cd $GO_CLASSIFICATOR_PATH/etl
+go build -o $BIN_PATH/etl .
 
-echo "Building Batch Classificator node Golang binary..."
-cd ../batch_email_classificator
-go build -o ../../bin/batch_email_classificator .
-
+echo "Building Email Classificator node Golang binary..."
+cd $GO_CLASSIFICATOR_PATH/email_classificator
+go build -o $BIN_PATH/email_classificator .
 
 echo "Building Stats Storer node Golang binary..."
-cd ../stats_storer
-go build -o ../../bin/stats_storer .
+cd $COMMON_PATH/stats_storer
+go build -o $BIN_PATH/stats_storer .
 
 echo "Building Repairs Handler node Golang binary..."
-cd ../repairs_handler
-go build -o ../../bin/repairs_handler .
+cd $COMMON_PATH/repairs_handler
+go build -o $BIN_PATH/repairs_handler .
 
 echo "Building Exitpoint node Golang binary..."
-cd ../exitpoint
-go build -o ../../bin/exitpoint .
-cd ../../..
+cd $COMMON_PATH/exitpoint
+go build -o $BIN_PATH/exitpoint .
+cd $ROOT_PATH
 
 
 echo "Generating $VERSION.krt..."
