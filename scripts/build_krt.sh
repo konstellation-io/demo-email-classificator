@@ -20,6 +20,7 @@ COMMON_PATH="$VERSION_PATH/src/common"
 # Please install yq binary from https://github.com/mikefarah/yq/releases and think twice before using Snap next time.
 
 echo -e "Reading current version: \c"
+#CURRENT_VERSION=$(yq e .version ${VERSION_DIR}/krt.yml)
 CURRENT_VERSION=$(yq e .version ${VERSION_DIR}/krt.yml)
 
 echo "${CURRENT_VERSION}"

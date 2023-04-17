@@ -3,7 +3,7 @@ krtVersion: v2
 description: Demo email classificator for branching features.
 entrypoint:
   proto: public_input.proto
-  image: konstellation/kre-entrypoint:latest
+  image: konstellation/kre-entrypoint:3.2.1
 config:
   variables:
 workflows:
@@ -12,7 +12,7 @@ workflows:
     exitpoint: exitpoint
     nodes:
       - name: etl
-        image: konstellation/kre-py:latest
+        image: konstellation/kre-py:3.3.1
         src: src/py-classificator/etl/main.py
         objectStore:
           name: emails
@@ -21,7 +21,7 @@ workflows:
           - 'entrypoint'
 
       - name: email-classificator
-        image: konstellation/kre-py:latest
+        image: konstellation/kre-py:3.3.1
         src: src/py-classificator/email_classificator/main.py
         objectStore:
           name: emails
@@ -30,13 +30,13 @@ workflows:
           - 'etl'
 
       - name: repairs-handler
-        image: konstellation/kre-go:latest
+        image: konstellation/kre-go:4.3.1
         src: bin/repairs_handler
         subscriptions:
           - 'email-classificator.repairs'
 
       - name: stats-storer
-        image: konstellation/kre-go:latest
+        image: konstellation/kre-go:4.3.1
         src: bin/stats_storer
         objectStore:
           name: emails
@@ -45,7 +45,7 @@ workflows:
           - 'email-classificator'
 
       - name: exitpoint
-        image: konstellation/kre-go:latest
+        image: konstellation/kre-go:4.3.1
         src: bin/exitpoint
         objectStore:
           name: emails
@@ -59,7 +59,7 @@ workflows:
     exitpoint: exitpoint
     nodes:
       - name: etl
-        image: konstellation/kre-go:latest
+        image: konstellation/kre-go:4.3.1
         src: bin/etl
         objectStore:
           name: emails
@@ -68,7 +68,7 @@ workflows:
           - 'entrypoint'
 
       - name: email-classificator
-        image: konstellation/kre-go:latest
+        image: konstellation/kre-go:4.3.1
         src: bin/email_classificator
         objectStore:
           name: emails
@@ -77,13 +77,13 @@ workflows:
           - 'etl'
 
       - name: repairs-handler
-        image: konstellation/kre-go:latest
+        image: konstellation/kre-go:4.3.1
         src: bin/repairs_handler
         subscriptions:
           - 'email-classificator.repairs'
 
       - name: stats-storer
-        image: konstellation/kre-go:latest
+        image: konstellation/kre-go:4.3.1
         src: bin/stats_storer
         objectStore:
           name: emails
@@ -92,7 +92,7 @@ workflows:
           - 'email-classificator'
 
       - name: exitpoint
-        image: konstellation/kre-go:latest
+        image: konstellation/kre-go:4.3.1
         src: bin/exitpoint
         objectStore:
           name: emails

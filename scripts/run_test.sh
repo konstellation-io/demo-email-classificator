@@ -52,7 +52,7 @@ call_to_entrypoint() {
 
     start_call_time="$(date -u +%s)"
 
-    REQUEST_DATA='{"batch_size": 10, "filename":"'$(generate_random_string 15)'"}'
+    REQUEST_DATA='{"batch_size": 10, "filename": "emails.csv", "payload":"'$(generate_random_string 15)'"}'
 
 
 

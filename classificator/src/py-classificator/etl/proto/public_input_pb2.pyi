@@ -20,15 +20,18 @@ class Request(google.protobuf.message.Message):
 
     FILENAME_FIELD_NUMBER: builtins.int
     BATCH_SIZE_FIELD_NUMBER: builtins.int
+    PAYLOAD_FIELD_NUMBER: builtins.int
     filename: builtins.str
     batch_size: builtins.int
+    payload: builtins.str
     def __init__(
         self,
         *,
         filename: builtins.str = ...,
         batch_size: builtins.int = ...,
+        payload: builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["batch_size", b"batch_size", "filename", b"filename"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["batch_size", b"batch_size", "filename", b"filename", "payload", b"payload"]) -> None: ...
 
 global___Request = Request
 

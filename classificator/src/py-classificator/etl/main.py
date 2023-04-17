@@ -25,6 +25,13 @@ async def default_handler(ctx, data):
         for row in rows:
             emails.append(row)
 
+    await ctx.configuration.set("emails_processed_py", f"project {len(emails)}", "project")
+    await ctx.configuration.set("emails_processed_py", f"workflow {len(emails)}", "workflow")
+    await ctx.configuration.set("emails_processed_py", f"node {len(emails)}", "node")
+
+    val = await ctx.configuration.get("emails_processed_py", "node")
+    ctx.logger.info(val)
+
     res = Response()
     res.message = f"Processing of {len(emails)} emails in progress"
     await ctx.send_early_reply(res)
@@ -52,24 +59,3 @@ async def default_handler(ctx, data):
             csv_writer.writeheader()
             count = 0
     return
-
-async def new_handler(ctx, req) -> None:
-    ctx.logger.info("[executing new handler]")
-
-    request = Request()
-    req.Unpack(request)
-
-    res = Response()
-    res.message = f"Processing of {request.filename} emails in progress"
-    await ctx.send_early_reply(res)
-
-    etl_output = EtlOutput()
-    etl_output.emails_key = request.filename
-
-    await ctx.send_output(etl_output)
-
-    return
-
-custom_handlers = {
-    "entrypoint": new_handler,
-}

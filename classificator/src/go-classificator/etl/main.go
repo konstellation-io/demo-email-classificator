@@ -55,6 +55,21 @@ func handler(ctx *kre.HandlerContext, data *anypb.Any) error {
 
 	amountOfBatches := int(math.Ceil(float64(len(emails)) / float64(batchSize)))
 
+	err = ctx.Configuration.Set("emails_processed", fmt.Sprintf("project %d", len(emails)), kre.ProjectScope)
+	if err != nil {
+		return fmt.Errorf("error storing configuration within ProjectScope: %w", err)
+	}
+
+	err = ctx.Configuration.Set("emails_processed", fmt.Sprintf("workflow %d", len(emails)), kre.WorkflowScope)
+	if err != nil {
+		return fmt.Errorf("error storing configuration within WorkflowScope: %w", err)
+	}
+
+	err = ctx.Configuration.Set("emails_processed", fmt.Sprintf("node %d", len(emails)), kre.NodeScope)
+	if err != nil {
+		return fmt.Errorf("error storing configuration within NodeScope: %w", err)
+	}
+
 	for i := 0; i < amountOfBatches; i++ {
 		lastItemInBatch := i*batchSize + batchSize
 		if lastItemInBatch > len(emails) {

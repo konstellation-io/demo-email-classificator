@@ -35,6 +35,23 @@ func handler(ctx *kre.HandlerContext, data *anypb.Any) error {
 		return fmt.Errorf("invalid request: %s", err)
 	}
 
+	val, err := ctx.Configuration.Get("emails_processed", kre.ProjectScope)
+	if err != nil {
+		return fmt.Errorf("error getting project config: %w", err)
+	}
+	ctx.Logger.Info(val)
+
+	val, err = ctx.Configuration.Get("emails_processed", kre.WorkflowScope)
+	if err != nil {
+		return fmt.Errorf("error getting workflow config: %w", err)
+	}
+	ctx.Logger.Info(val)
+
+	val, err = ctx.Configuration.Get("emails_processed", kre.NodeScope)
+	if err != nil {
+		ctx.Logger.Infof("node config not found: %s", err)
+	}
+
 	ctx.Logger.Infof("Classifying batch %q", req.EmailsKey)
 
 	emailsBatch, err := ctx.ObjectStore.Get(req.EmailsKey)
