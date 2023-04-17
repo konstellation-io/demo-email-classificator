@@ -10,8 +10,21 @@ VERSION=$3
 ENTRYPOINT_SERVICE=main.Entrypoint/${4:-"GoDescriptor"}
 DEFAULT_MESSAGES=1
 TOTAL_MESSAGES=${5:-$DEFAULT_MESSAGES}
-REQUEST_DATA='{"batch_size": 10,"filename":"emails.csv"}'
+#REQUEST_DATA='{"batch_size": 10,"filename":"emails.csv"}'
 SEND_CONCURRENT=1
+
+generate_random_string() {
+  if [ $# -ne 1 ]; then
+    echo "Usage: generate_random_string <size_in_mb>"
+    return 1
+  fi
+
+  local size_in_mb=$1
+  local size_in_bytes=$((size_in_mb * 1024 * 1024))
+  local random_string=$(tr -dc '[:alnum:]' </dev/urandom | head -c "$size_in_bytes")
+
+  echo "$random_string"
+}
 
 run_test() {
   check_not_empty "VERSION" "missing version name"
@@ -39,8 +52,12 @@ call_to_entrypoint() {
 
     start_call_time="$(date -u +%s)"
 
+    REQUEST_DATA='{"batch_size": 10, "filename":"'$(generate_random_string 15)'"}'
+
+
+
     ## GRPC CALL
-    RESPONSE=$(echo "$REQUEST_DATA" | grpcurl -plaintext -d @ "$ENTRYPOINT_URL" "$ENTRYPOINT_SERVICE")
+    RESPONSE=$(echo "$REQUEST_DATA" | grpcurl -max-msg-sz=20485760 -plaintext -d @ "$ENTRYPOINT_URL" "$ENTRYPOINT_SERVICE")
 
     end_call_time="$(date -u +%s)"
     elapsed_call_time=$(($end_call_time - $start_call_time))
@@ -85,7 +102,7 @@ close_port_forward() {
   # STOPPING PORT FORWARD
   echo_info_header "closing port forward..."
   {
-    sleep 0.2 && kill -s INT $PORT_FORWARD_PID && wait $PORT_FORWARD_PID
+    sleep 20 && kill -s INT $PORT_FORWARD_PID && wait $PORT_FORWARD_PID
   } &
 }
 

@@ -52,3 +52,24 @@ async def default_handler(ctx, data):
             csv_writer.writeheader()
             count = 0
     return
+
+async def new_handler(ctx, req) -> None:
+    ctx.logger.info("[executing new handler]")
+
+    request = Request()
+    req.Unpack(request)
+
+    res = Response()
+    res.message = f"Processing of {request.filename} emails in progress"
+    await ctx.send_early_reply(res)
+
+    etl_output = EtlOutput()
+    etl_output.emails_key = request.filename
+
+    await ctx.send_output(etl_output)
+
+    return
+
+custom_handlers = {
+    "entrypoint": new_handler,
+}

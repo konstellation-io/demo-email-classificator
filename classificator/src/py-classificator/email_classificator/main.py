@@ -52,3 +52,29 @@ def dict_to_email(raw_email: dict[str, str]) -> Email:
     email.creation_date = raw_email.get("date")
 
     return email
+
+async def new_handler(ctx, req)-> None:
+    if ctx.is_message_early_reply():
+        return
+
+    etl_output = EtlOutput()
+    req.Unpack(etl_output)
+
+    email = Email(
+        title="test",
+        body="test",
+        author="test",
+        creation_date="test",
+    )
+    res = ClassificatorOutput()
+    res.email.CopyFrom(email)
+    res.category = classify_email(email)
+
+    if res.category == CATEGORY_REPARATIONS:
+        await ctx.send_output(res, "repairs")
+
+    await ctx.send_output(res)
+
+custom_handlers = {
+    "etl": new_handler,
+}
