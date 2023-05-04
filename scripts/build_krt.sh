@@ -14,7 +14,8 @@ VERSION_PATH=$ROOT_PATH/$VERSION_DIR
 BIN_PATH="$VERSION_PATH/bin"
 GO_CLASSIFICATOR_PATH="$VERSION_PATH/src/go-classificator"
 COMMON_PATH="$VERSION_PATH/src/common"
-
+TARGET_OS="linux"
+TARGET_ARCHITECTURE="amd64"
 
 # NOTE: if yq commands fails it due to the awesome Snap installation that is confined (heavily restricted).
 # Please install yq binary from https://github.com/mikefarah/yq/releases and think twice before using Snap next time.
@@ -33,23 +34,23 @@ fi
 
 echo "Building ETL node Golang binary..."
 cd $GO_CLASSIFICATOR_PATH/etl
-go build -o $BIN_PATH/etl .
+env GOOS=$TARGET_OS GOARCH=$TARGET_ARCHITECTURE go build -o $BIN_PATH/etl .
 
 echo "Building Email Classificator node Golang binary..."
 cd $GO_CLASSIFICATOR_PATH/email_classificator
-go build -o $BIN_PATH/email_classificator .
+env GOOS=$TARGET_OS GOARCH=$TARGET_ARCHITECTURE go build -o $BIN_PATH/email_classificator .
 
 echo "Building Stats Storer node Golang binary..."
 cd $COMMON_PATH/stats_storer
-go build -o $BIN_PATH/stats_storer .
+env GOOS=$TARGET_OS GOARCH=$TARGET_ARCHITECTURE go build -o $BIN_PATH/stats_storer .
 
 echo "Building Repairs Handler node Golang binary..."
 cd $COMMON_PATH/repairs_handler
-go build -o $BIN_PATH/repairs_handler .
+env GOOS=$TARGET_OS GOARCH=$TARGET_ARCHITECTURE go build -o $BIN_PATH/repairs_handler .
 
 echo "Building Exitpoint node Golang binary..."
 cd $COMMON_PATH/exitpoint
-go build -o $BIN_PATH/exitpoint .
+env GOOS=$TARGET_OS GOARCH=$TARGET_ARCHITECTURE go build -o $BIN_PATH/exitpoint .
 cd $ROOT_PATH
 
 
