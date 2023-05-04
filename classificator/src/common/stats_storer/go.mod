@@ -3,7 +3,7 @@ module stats_storer
 go 1.18
 
 require (
-	github.com/konstellation-io/kre-runners/kre-go/v4 v4.2.0
+	github.com/konstellation-io/kre-runners/kre-go/v4 v4.3.2
 	google.golang.org/protobuf v1.30.0
 )
 
@@ -17,8 +17,8 @@ require (
 	github.com/klauspost/compress v1.14.4 // indirect
 	github.com/konstellation-io/kre/libs/simplelogger v0.0.0-20220411095035-228ab5da0b15 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
-	github.com/labstack/echo/v4 v4.1.11 // indirect
-	github.com/labstack/gommon v0.3.0 // indirect
+	github.com/labstack/echo/v4 v4.9.0 // indirect
+	github.com/labstack/gommon v0.3.1 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.16 // indirect
 	github.com/nats-io/nats.go v1.16.0 // indirect
@@ -41,5 +41,3 @@ require (
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
-
-replace github.com/konstellation-io/kre-runners/kre-go/v4 => ./../../../../../runners/kre-go
