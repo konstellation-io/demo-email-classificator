@@ -25,10 +25,12 @@ func handlerInit(ctx *kre.HandlerContext) {
 func handler(ctx *kre.HandlerContext, data *anypb.Any) error {
 	ctx.Logger.Info("[handler invoked]")
 
+	// If the message is an early reply, do nothing
 	if ctx.IsMessageEarlyReply() {
 		return nil
 	}
 
+	// Unpack the message payload
 	req := &proto.EtlOutput{}
 	err := anypb.UnmarshalTo(data, req, protobuf.UnmarshalOptions{})
 	if err != nil {
@@ -37,6 +39,7 @@ func handler(ctx *kre.HandlerContext, data *anypb.Any) error {
 
 	ctx.Logger.Infof("Classifying batch %q", req.EmailsKey)
 
+	// Get the emails batch from the object store
 	emailsBatch, err := ctx.ObjectStore.Get(req.EmailsKey)
 	if err != nil {
 		return fmt.Errorf("error getting emails batch from object store: %w", err)
@@ -47,6 +50,7 @@ func handler(ctx *kre.HandlerContext, data *anypb.Any) error {
 		return fmt.Errorf("error unmarshaling emails: %w", err)
 	}
 
+	// Classify each email and send the output to the next handler
 	for _, email := range emails {
 		category := clasifyEmail(email)
 		output := &proto.ClassificatorOutput{
@@ -59,6 +63,7 @@ func handler(ctx *kre.HandlerContext, data *anypb.Any) error {
 			Category: category,
 		}
 
+		// If the email category is "repairs", send the output to the "repairs" subtopic
 		if category == proto.EmailCategory_CATEGORY_REPARATIONS {
 			err := ctx.SendOutput(output, "repairs")
 			if err != nil {
@@ -66,6 +71,7 @@ func handler(ctx *kre.HandlerContext, data *anypb.Any) error {
 			}
 		}
 
+		// Otherwise, send the output to the main topic
 		err = ctx.SendOutput(output)
 		if err != nil {
 			return fmt.Errorf("error sending output: %w", err)
@@ -83,6 +89,7 @@ func clasifyEmail(_ *Email) proto.EmailCategory {
 		proto.EmailCategory_CATEGORY_SPAM,
 	}
 
+	// Randomly assign a category to the email
 	return categories[rand.Intn(len(categories)-1)]
 }
 

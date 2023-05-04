@@ -27,12 +27,14 @@ func handlerInit(ctx *kre.HandlerContext) {
 func handler(ctx *kre.HandlerContext, data *anypb.Any) error {
 	ctx.Logger.Info("[handler invoked]")
 
+	// Unpack the message payload
 	req := &proto.Request{}
 	err := anypb.UnmarshalTo(data, req, protobuf.UnmarshalOptions{})
 	if err != nil {
 		return fmt.Errorf("invalid request: %s", err)
 	}
 
+	// Read emails from CSV file from the filename received in the request
 	file, err := os.Open(ctx.Path(req.Filename))
 	if err != nil {
 		return fmt.Errorf("error reading emails file: %w", err)
@@ -46,6 +48,7 @@ func handler(ctx *kre.HandlerContext, data *anypb.Any) error {
 
 	batchSize := int(req.BatchSize)
 
+	// Send early reply to the client
 	err = ctx.SendEarlyReply(&proto.Response{
 		Message: fmt.Sprintf("Processing %d emails", len(emails)),
 	})
@@ -55,6 +58,7 @@ func handler(ctx *kre.HandlerContext, data *anypb.Any) error {
 
 	amountOfBatches := int(math.Ceil(float64(len(emails)) / float64(batchSize)))
 
+	// Send batches of emails to the next step in the pipeline using the object store
 	for i := 0; i < amountOfBatches; i++ {
 		lastItemInBatch := i*batchSize + batchSize
 		if lastItemInBatch > len(emails) {
@@ -80,11 +84,13 @@ func sendBatch(ctx *kre.HandlerContext, batch []*Email, batchKey string) error {
 		return fmt.Errorf("error parsing emails batch: %w ", err)
 	}
 
+	// Save the batch in the object store with the key generated from the request ID and the batch number
 	err = ctx.ObjectStore.Save(batchKey, parsedBatch)
 	if err != nil {
 		return fmt.Errorf("error saving emails in object store: %w", err)
 	}
 
+	// Send the batch key to the next step in the workflow
 	err = ctx.SendOutput(&proto.EtlOutput{
 		EmailsKey: batchKey,
 	})

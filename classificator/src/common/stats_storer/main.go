@@ -19,14 +19,18 @@ func handlerInit(ctx *kre.HandlerContext) {
 func handler(ctx *kre.HandlerContext, data *anypb.Any) error {
 	ctx.Logger.Info("[handler invoked]")
 
+	// Unpack the message payload
 	req := &proto.ClassificatorOutput{}
 	err := anypb.UnmarshalTo(data, req, protobuf.UnmarshalOptions{})
 	if err != nil {
 		return fmt.Errorf("invalid request: %s", err)
 	}
 
+	// Store email metrics
 	storeMetrics(ctx, req.Category.String())
 	res := &proto.StatsStorerOutput{Message: "Messages processed"}
+
+	// Send the message to the next node
 	err = ctx.SendOutput(res)
 	if err != nil {
 		ctx.Logger.Errorf("error publishing message: %s", err)
