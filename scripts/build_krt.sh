@@ -55,17 +55,6 @@ cd $ROOT_PATH
 
 echo "Generating $VERSION.krt..."
 
-mkdir -p build/${VERSION_DIR}
-rm -rf ./build/${VERSION_DIR}/{docs,src,assets,models,*.proto,*.yml} || true
-
-cd build/${VERSION_DIR}
-
-cp  -r ../../${VERSION_DIR}/* .
-
-yq eval --inplace -- ".version = \"${VERSION}\"" ./krt.yml
-
-tar -zcf ../${VERSION}.krt  --exclude=*.krt --exclude=*.tar.gz *
-cd ../../
-rm -rf build/${VERSION_DIR} || true
+kli krt build -i ${VERSION_PATH} -o ${ROOT_PATH}/build/ -v ${VERSION}
 
 echo "Done"
