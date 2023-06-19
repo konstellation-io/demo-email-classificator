@@ -1,9 +1,9 @@
 go 1.18
 
 use (
-	./classificator/src/go-classificator/email_classificator
-	./classificator/src/go-classificator/etl
 	./classificator/src/common/exitpoint
 	./classificator/src/common/repairs_handler
 	./classificator/src/common/stats_storer
+	./classificator/src/go-classificator/email_classificator
+	./classificator/src/go-classificator/etl
 )
